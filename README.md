@@ -14,9 +14,14 @@
     -v ./mappings/:/srv/rest-mqtt-proxy/mappings/:ro
     kungalex/http-mqtt-proxy:latest
 `
+
+## Docker-Compose
+
+`docker-compose up
+`
 ## Publish MQTT
 
-`mosquitto_pub -h iot.eclipse.org -p 1883 -m value -t test-a/topic/abc
+`mosquitto_pub -h localhost -p 1883 -m value -t test-a/topic/abc
 `
 
 ## Curl
