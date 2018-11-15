@@ -1,2 +1,3 @@
 .idea
 config/prod
+app/__pycache__/
