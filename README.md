@@ -10,9 +10,9 @@
 `docker run -it \
     -e APP_CONFIG_FILE=/srv/rest-mqtt-proxy/config.ini \
     -e PRE_MAPPING_DIR=/srv/rest-mqtt-proxy/mappings \
-    -v ./config.ini:/srv/rest-mqtt-proxy/config.ini:ro
-    -v ./mappings/:/srv/rest-mqtt-proxy/mappings/:ro
-    kungalex/http-mqtt-proxy:latest
+    -v ${PWD}/config/prod/config.ini:/srv/rest-mqtt-proxy/config.ini:ro \
+    -v ${PWD}/config/prod/mappings/:/srv/rest-mqtt-proxy/mappings/:ro \
+    kungalex/rest-mqtt-proxy:latest
 `
 
 ## Docker-Compose

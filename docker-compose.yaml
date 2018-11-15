@@ -3,7 +3,7 @@ version: '3'
 services:
 
 # https://github.com/KungAlex/rest-mqtt-proxy
-  http-mqtt-proxy:
+  rest-mqtt-proxy:
     image: kungalex/rest-mqtt-proxy:latest
     #container_name: rest-mqtt-proxy
     # restart: always
@@ -12,8 +12,8 @@ services:
       - PRE_MAPPING_DIR=/srv/rest-mqtt-proxy/mappings
 
     volumes:
-      - ./config.ini:/srv/rest-mqtt-proxy/config.ini:ro
-      - ./mappings/:/srv/rest-mqtt-proxy/mappings/:ro
+      - ${PWD}/config/prod/config.ini:/srv/rest-mqtt-proxy/config.ini:ro
+      - ${PWD}/config/prod/mappings/:/srv/rest-mqtt-proxy/mappings/:ro
 
     ports:
      - "5000:5000"

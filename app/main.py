@@ -23,7 +23,7 @@ log = logging.getLogger(__name__)
 # Read Config
 config = configparser.ConfigParser()
 
-file=(os.getenv('APP_CONFIG_FILE', '../config.ini'))
+file=(os.getenv('APP_CONFIG_FILE', '../config/dev/config.ini'))
 #file=dir_path+'/'+file_name
 log.info(file)
 config.read(file)
@@ -108,7 +108,7 @@ topic_mapping_list = []
 subscriptions_list = []
 
 #dir_path = os.path.dirname(os.path.realpath(__file__))
-dir_name = (os.getenv('PRE_MAPPING_DIR', '../mappings'))  # TODO fixme
+dir_name = (os.getenv('PRE_MAPPING_DIR', '../config/dev/mappings'))  # TODO fixme
 #dir_path = dir_path + '/' + dir_name
 
 log.info(dir_name)
