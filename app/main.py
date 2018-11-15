@@ -20,15 +20,13 @@ import logging
 log = logging.getLogger(__name__)
 
 
+APP_CONFIG_FILE=(os.getenv('APP_CONFIG_FILE', '../config/dev/config.ini'))
+PRE_MAPPING_DIR=(os.getenv('PRE_MAPPING_DIR', '../config/dev/mappings'))
+
 # Read Config
 config = configparser.ConfigParser()
-
-file=(os.getenv('APP_CONFIG_FILE', '../config/dev/config.ini'))
-#file=dir_path+'/'+file_name
-log.info(file)
-config.read(file)
-
-#config.read("config.ini")
+log.info(APP_CONFIG_FILE)
+config.read(APP_CONFIG_FILE)
 
 # Define Queues
 sub_queue = queue.Queue()  # Queue for all topic to sub
@@ -107,17 +105,14 @@ api = Api(app)
 topic_mapping_list = []
 subscriptions_list = []
 
-#dir_path = os.path.dirname(os.path.realpath(__file__))
-dir_name = (os.getenv('PRE_MAPPING_DIR', '../config/dev/mappings'))  # TODO fixme
-#dir_path = dir_path + '/' + dir_name
 
-log.info(dir_name)
+log.info(PRE_MAPPING_DIR)
 
 # TODO
-for file in os.listdir(dir_name):
+for file in os.listdir(PRE_MAPPING_DIR):
     print(file)
     if file.endswith(".yaml") or file.endswith(".yml"):
-        yaml_file = (os.path.join(dir_name, file))
+        yaml_file = (os.path.join(PRE_MAPPING_DIR, file))
         print(yaml_file)
         with open(yaml_file, 'r') as stream:
             yamls = yaml.load_all(stream)

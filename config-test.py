@@ -4,14 +4,15 @@ from app import MQTTSubscriptionV1
 from flask_restful import fields, marshal
 import configparser
 
+APP_CONFIG_FILE=(os.getenv('APP_CONFIG_FILE', 'config/dev/config.ini'))
+PRE_MAPPING_DIR=(os.getenv('PRE_MAPPING_DIR', 'config/dev/mappings'))
+
 # Test Config
 config = configparser.ConfigParser()
-config.read("config.ini")
-
+config.read(APP_CONFIG_FILE)
 
 print("#############")
 print("Test Config")
-
 
 for s in config.sections():
     print("---")
@@ -33,19 +34,19 @@ sub_fields = {
 
 subscriptions_list = []
 
-for file in os.listdir("./mappings"):
+for file in os.listdir(PRE_MAPPING_DIR):
     if file.endswith(".yaml") or file.endswith(".yml"):
-        yaml_file = (os.path.join("./mappings", file))
+        yaml_file = (os.path.join(PRE_MAPPING_DIR, file))
         with open(yaml_file, 'r') as stream:
             yamls = yaml.load_all(stream)
             for y in yamls:
 
                 try:
 
-                    kind=y['kind']
+                    kind = y['kind']
 
                     # TODO switch case!
-                    if kind=="MQTTSubscriptionV1":
+                    if kind == "MQTTSubscriptionV1":
                         try:
                             sub = MQTTSubscriptionV1.load_yaml(yaml=y)
                             subscriptions_list.append(sub)
@@ -54,7 +55,7 @@ for file in os.listdir("./mappings"):
                             print(exc)
                             # TODO exceptions description#
 
-                    if kind=="MQTTSubscriptionV2":
+                    if kind == "MQTTSubscriptionV2":
                         try:
                             sub = MQTTSubscriptionV1.load_yaml(yaml=y)
                             subscriptions_list.append(sub)
@@ -70,12 +71,13 @@ for file in os.listdir("./mappings"):
 def show_list():
     return [marshal(sub, sub_fields) for sub in subscriptions_list]
 
+
 print("#############")
 print("Test Mappping")
-list=show_list()
+list = show_list()
 
 for l in list:
     print("---")
     print(l)
-    #print(l.keys())
-    #print(l.values())
+    # print(l.keys())
+    # print(l.values())
