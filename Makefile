@@ -18,7 +18,14 @@ build-nc: ## Build Container-Image without caching
 	docker build --no-cache -t kungalex/$(APP_NAME) .
 
 run: ## Run Container
-	docker run -it -p=$(PORT):5000 --name="$(APP_NAME)" $(APP_NAME)
+	docker run -it \
+	--name="$(APP_NAME)" \
+	-p=$(PORT):5000 \
+    -e APP_CONFIG_FILE=/srv/rest-mqtt-proxy/config.ini \
+    -e PRE_MAPPING_DIR=/srv/rest-mqtt-proxy/mappings \
+    -v ${PWD}/config/dev/config.ini:/srv/rest-mqtt-proxy/config.ini:ro \
+    -v ${PWD}/config/dev/mappings/:/srv/rest-mqtt-proxy/mappings/:ro \
+    $(DOCKER_IMAGE):$(DOCKER_TAG)
 
 stop: ## Stop and remove Container
 	docker stop $(APP_NAME); docker rm $(APP_NAME)
