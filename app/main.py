@@ -1,3 +1,9 @@
+"""
+main.py
+====================================
+Main entry-point of this project
+"""
+
 import queue
 import configparser
 import os
@@ -13,7 +19,7 @@ from flask_restful import Api, Resource, reqparse, marshal
 
 from models import TopicMappingV1, MQTTSubscriptionV1
 from views import subscription_fields, topic_mapping_fields
-import callbacks
+from callbacks import Callbacks
 from helper import run_async
 
 import logging
@@ -38,8 +44,8 @@ persistent_queue = queue.Queue() # Queue for influxDB persistent manager
 
 def create_app():
     """
+    Return Flask App Object
 
-    :return:
     """
     log.info("run create_app()")
     app = Flask(__name__)
@@ -152,7 +158,7 @@ for subscription in subscriptions_list:
 
 def run_event_handlers(subscribtion, msg):
     try:
-        default_manager = getattr(callbacks, subscribtion.event_handlers['default_manager'])
+        default_manager = getattr(Callbacks, subscribtion.event_handlers['default_manager'])
         if default_manager is not None:
             default_manager(msg)
     except AttributeError:
@@ -162,7 +168,7 @@ def run_event_handlers(subscribtion, msg):
         log.info("no default_manager function define ")
 
     try:
-        persistent_manager = getattr(callbacks, subscribtion.event_handlers['persistent_manager'])
+        persistent_manager = getattr(Callbacks, subscribtion.event_handlers['persistent_manager'])
         if persistent_manager is not None:
             persistent_manager(msg=msg, queue=persistent_queue)
 
