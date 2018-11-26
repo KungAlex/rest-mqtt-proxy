@@ -9,17 +9,27 @@
 Getting-Started
 =========
 
-This section contains numerous tutorials that cover basic use cases of
-rest-mqtt-proxy.
+This section contains installation instructions and numerous tutorials that cover basic use cases of rest-mqtt-proxy.
 
 
 Install
 --------
 
+You can use prebuild Docker image or clone this Repo and build from source build:
+
+   clone
+   make build
+
+   to see all available commands type: make help
 
 Docker
 --------
 
+docker pull kungalex/rest-mqtt-proxy
+docker run -it -p 5000:5000 kungalex/rest-mqtt-proxy
 
 Kubernetes
---------
+----------
+
+kubectl apply -f k8s-example/
+
