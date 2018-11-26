@@ -27,13 +27,17 @@ run: ## Run Container
     -v ${PWD}/config/dev/mappings/:/srv/rest-mqtt-proxy/mappings/:ro \
     $(DOCKER_IMAGE):$(DOCKER_TAG)
 
-test: ## Test Config and Pre-Mappings files
+test-config: ## Test Config and Pre-Mappings files
 	docker run -it \
     -e APP_CONFIG_FILE=/srv/rest-mqtt-proxy/config.ini \
     -e PRE_MAPPING_DIR=/srv/rest-mqtt-proxy/mappings \
     -v ${PWD}/config/dev/config.ini:/srv/rest-mqtt-proxy/config.ini:ro \
     -v ${PWD}/config/dev/mappings/:/srv/rest-mqtt-proxy/mappings/:ro \
     $(DOCKER_IMAGE):$(DOCKER_TAG) python config-test.py
+
+up: build run ## Build and Run Container
+
+check-config: build-nc test-config ## Build without caching and test config
 
 stop: ## Stop and remove Container
 	docker stop $(APP_NAME); docker rm $(APP_NAME)

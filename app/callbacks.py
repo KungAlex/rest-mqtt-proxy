@@ -13,8 +13,15 @@ log = logging.getLogger(__name__)
 
 
 class Callbacks(object):
+    """
+    Test
+    """
 
     def default_output_handler(msg):
+        """
+
+        :return:
+        """
 
         try:
             output = json.loads(msg.payload.decode())
@@ -26,6 +33,11 @@ class Callbacks(object):
             log.info("topic: " + msg.topic + " payload: " + str(output) + " Type: " + str(type(output)))
 
     def push_influxdb_handler(msg, queue):
+        """
+
+        :param queue:
+        :return:
+        """
         log.info("push_influxdb_handler: start callback")
         value_output = msg.payload.decode()
 
