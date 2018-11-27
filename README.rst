@@ -117,3 +117,8 @@ Kubernetes
 
 
 For more information about kubernetes see: https://kubernetes.io/
+
+
+
+"This project is licensed under the terms of the MIT license."
+Copyright (c) 2018 Alexander Kleinschmidt
