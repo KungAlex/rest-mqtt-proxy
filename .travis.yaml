@@ -1,0 +1,18 @@
+
+---
+sudo: required
+dist: trusty
+
+language: python
+python: "3"
+
+
+branches:
+  only:
+    - master
+
+services:
+  - docker
+
+script:
+  - docker build -t kungalex/rest-mqtt-proxy .
