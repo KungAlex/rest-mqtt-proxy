@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Source &mdash; rest-mqtt-proxy 1.0.0 documentation</title>
+  <title>Source &mdash; rest-mqtt-proxy 1.0.0 beta documentation</title>
   
 
   
@@ -56,6 +56,10 @@
           
             
             
+              <div class="version">
+                1.0.0 beta
+              </div>
+            
           
 
           
@@ -79,6 +83,7 @@
             
               <p class="caption"><span class="caption-text">Contents:</span></p>
 <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../overview/index.html">Overview</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../readme_include.html">Getting-Started</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../config/index.html">Config</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../api-documentation/index.html">API Documentation</a></li>
@@ -154,6 +159,58 @@
 <p>This section contains a description of the important class Implementations.</p>
 <div class="toctree-wrapper compound">
 </div>
+<span class="target" id="module-models"></span><div class="section" id="models-py">
+<h2>models.py<a class="headerlink" href="#models-py" title="Permalink to this headline">¶</a></h2>
+<p>All Model Classes for Resources</p>
+<dl class="class">
+<dt id="models.TopicMappingV1">
+<em class="property">class </em><code class="descclassname">models.</code><code class="descname">TopicMappingV1</code><span class="sig-paren">(</span><em>topic</em>, <em>sub_uuid</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/models.html#TopicMappingV1"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#models.TopicMappingV1" title="Permalink to this definition">¶</a></dt>
+<dd><p>TopicMappingV1: Model Class to handle all Topic-Mappings</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="models.MQTTSubscriptionV1">
+<em class="property">class </em><code class="descclassname">models.</code><code class="descname">MQTTSubscriptionV1</code><span class="sig-paren">(</span><em>subregex=None</em>, <em>description=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/models.html#MQTTSubscriptionV1"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#models.MQTTSubscriptionV1" title="Permalink to this definition">¶</a></dt>
+<dd><p>MQTTSubscriptionV1: Model Class to handle all MQTT-Subscriptions</p>
+</dd></dl>
+
+</div>
+<span class="target" id="module-main"></span><div class="section" id="main-py">
+<h2>main.py<a class="headerlink" href="#main-py" title="Permalink to this headline">¶</a></h2>
+<p>Main entry-point of this project</p>
+<dl class="function">
+<dt id="main.create_app">
+<code class="descclassname">main.</code><code class="descname">create_app</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/main.html#create_app"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#main.create_app" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return Flask App Object</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="main.create_mqtt_client">
+<code class="descclassname">main.</code><code class="descname">create_mqtt_client</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/main.html#create_mqtt_client"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#main.create_mqtt_client" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="main.create_persistent_client">
+<code class="descclassname">main.</code><code class="descname">create_persistent_client</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/main.html#create_persistent_client"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#main.create_persistent_client" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
 <span class="target" id="module-callbacks"></span><div class="section" id="callbacks-py">
 <h2>callbacks.py<a class="headerlink" href="#callbacks-py" title="Permalink to this headline">¶</a></h2>
 <p>The core module of my example project</p>
@@ -192,13 +249,169 @@
 </dd></dl>
 
 </div>
-<span class="target" id="module-main"></span><div class="section" id="main-py">
-<h2>main.py<a class="headerlink" href="#main-py" title="Permalink to this headline">¶</a></h2>
+<span class="target" id="module-mqtt_base_client"></span><div class="section" id="mqtt-base-client-py">
+<h2>mqtt_base_client.py<a class="headerlink" href="#mqtt-base-client-py" title="Permalink to this headline">¶</a></h2>
 <p>Main entry-point of this project</p>
+<dl class="class">
+<dt id="mqtt_base_client.BaseClient">
+<em class="property">class </em><code class="descclassname">mqtt_base_client.</code><code class="descname">BaseClient</code><span class="sig-paren">(</span><em>broker='iot.eclipse.org'</em>, <em>port=1883</em>, <em>sub_queue=None</em>, <em>pub_queue=None</em>, <em>msg_queue=None</em>, <em>password=None</em>, <em>username=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/mqtt_base_client.html#BaseClient"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mqtt_base_client.BaseClient" title="Permalink to this definition">¶</a></dt>
+<dd><p>Base Class for MQTT-Client</p>
+<dl class="method">
+<dt id="mqtt_base_client.BaseClient.start_pub_queue">
+<code class="descname">start_pub_queue</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/mqtt_base_client.html#BaseClient.start_pub_queue"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mqtt_base_client.BaseClient.start_pub_queue" title="Permalink to this definition">¶</a></dt>
+<dd><p>Start publish queue for handel asynchronous callbacks</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="mqtt_base_client.BaseClient.start_sub_queue">
+<code class="descname">start_sub_queue</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/mqtt_base_client.html#BaseClient.start_sub_queue"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mqtt_base_client.BaseClient.start_sub_queue" title="Permalink to this definition">¶</a></dt>
+<dd><p>Start subscribe queue for handel asynchronous callbacks</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
 <dl class="function">
-<dt id="main.create_app">
-<code class="descclassname">main.</code><code class="descname">create_app</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/main.html#create_app"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#main.create_app" title="Permalink to this definition">¶</a></dt>
-<dd><p>Return Flask App Object</p>
+<dt id="mqtt_base_client.on_connect_callback">
+<code class="descclassname">mqtt_base_client.</code><code class="descname">on_connect_callback</code><span class="sig-paren">(</span><em>client</em>, <em>userdata</em>, <em>flags</em>, <em>rc</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/mqtt_base_client.html#on_connect_callback"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mqtt_base_client.on_connect_callback" title="Permalink to this definition">¶</a></dt>
+<dd><p>on_connect callback</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>client</strong> – </li>
+<li><strong>userdata</strong> – </li>
+<li><strong>flags</strong> – </li>
+<li><strong>rc</strong> – </li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"></p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="mqtt_base_client.on_message_callback">
+<code class="descclassname">mqtt_base_client.</code><code class="descname">on_message_callback</code><span class="sig-paren">(</span><em>client</em>, <em>userdata</em>, <em>msg</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/mqtt_base_client.html#on_message_callback"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mqtt_base_client.on_message_callback" title="Permalink to this definition">¶</a></dt>
+<dd><p>on_message callback</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>client</strong> – </li>
+<li><strong>userdata</strong> – </li>
+<li><strong>msg</strong> – </li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"></p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="mqtt_base_client.on_publish_callback">
+<code class="descclassname">mqtt_base_client.</code><code class="descname">on_publish_callback</code><span class="sig-paren">(</span><em>client</em>, <em>userdata</em>, <em>mid</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/mqtt_base_client.html#on_publish_callback"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mqtt_base_client.on_publish_callback" title="Permalink to this definition">¶</a></dt>
+<dd><p>on_publish Callback</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>client</strong> – </li>
+<li><strong>userdata</strong> – </li>
+<li><strong>mid</strong> – </li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"></p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="mqtt_base_client.on_subscribe_callback">
+<code class="descclassname">mqtt_base_client.</code><code class="descname">on_subscribe_callback</code><span class="sig-paren">(</span><em>client</em>, <em>userdata</em>, <em>mid</em>, <em>granted_qos</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/mqtt_base_client.html#on_subscribe_callback"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mqtt_base_client.on_subscribe_callback" title="Permalink to this definition">¶</a></dt>
+<dd><p>on_subscribe callback</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>client</strong> – </li>
+<li><strong>userdata</strong> – </li>
+<li><strong>mid</strong> – </li>
+<li><strong>granted_qos</strong> – </li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"></p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+<span class="target" id="module-influx_base_client"></span><div class="section" id="influx-base-client-py">
+<h2>influx_base_client.py<a class="headerlink" href="#influx-base-client-py" title="Permalink to this headline">¶</a></h2>
+<p>Base InfluxDB Client</p>
+<dl class="class">
+<dt id="influx_base_client.InfluxDBBaseClient">
+<em class="property">class </em><code class="descclassname">influx_base_client.</code><code class="descname">InfluxDBBaseClient</code><span class="sig-paren">(</span><em>host='localhost'</em>, <em>port=8086</em>, <em>database='iot'</em>, <em>persistent_queue=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/influx_base_client.html#InfluxDBBaseClient"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#influx_base_client.InfluxDBBaseClient" title="Permalink to this definition">¶</a></dt>
+<dd><p>Base Class for InfluxDB Client</p>
+<dl class="method">
+<dt id="influx_base_client.InfluxDBBaseClient.run_persistent_queue">
+<code class="descname">run_persistent_queue</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/influx_base_client.html#InfluxDBBaseClient.run_persistent_queue"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#influx_base_client.InfluxDBBaseClient.run_persistent_queue" title="Permalink to this definition">¶</a></dt>
+<dd><p>Start persistent queue for handle asynchronous callbacks</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="influx_base_client.InfluxDBBaseClient.start_client">
+<code class="descname">start_client</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/influx_base_client.html#InfluxDBBaseClient.start_client"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#influx_base_client.InfluxDBBaseClient.start_client" title="Permalink to this definition">¶</a></dt>
+<dd><p>Start InfluxDB Client</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
 </dd></dl>
 
 </div>
@@ -222,7 +435,7 @@
 
   <div role="contentinfo">
     <p>
-        &copy; Copyright 2018, kungalex
+        &copy; Copyright 2018, Alexander Kleinschmidt
 
     </p>
   </div>

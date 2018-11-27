@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>API Documentation &mdash; rest-mqtt-proxy 1.0.0 documentation</title>
+  <title>API Documentation &mdash; rest-mqtt-proxy 1.0.0 beta documentation</title>
   
 
   
@@ -57,6 +57,10 @@
           
             
             
+              <div class="version">
+                1.0.0 beta
+              </div>
+            
           
 
           
@@ -80,6 +84,7 @@
             
               <p class="caption"><span class="caption-text">Contents:</span></p>
 <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../overview/index.html">Overview</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../readme_include.html">Getting-Started</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../config/index.html">Config</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">API Documentation</a></li>
@@ -155,7 +160,11 @@ rest-mqtt-proxy.</p>
 <div class="section" id="rest-resource-api">
 <h2>REST Resource: API<a class="headerlink" href="#rest-resource-api" title="Permalink to this headline">¶</a></h2>
 <ul class="simple">
-<li>List all API versions: <a class="reference external" href="http://0.0.0.0:5000/">http://0.0.0.0:5000/</a></li>
+<li><dl class="first docutils">
+<dt>List all API versions:</dt>
+<dd><a class="reference external" href="http://0.0.0.0:5000/">http://0.0.0.0:5000/</a></dd>
+</dl>
+</li>
 </ul>
 <div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
    <span class="nt">&quot;msg&quot;</span><span class="p">:</span> <span class="s2">&quot;Welcome to rest-mqtt-proxy prototype!&quot;</span><span class="p">,</span>
@@ -169,7 +178,11 @@ rest-mqtt-proxy.</p>
 </pre></div>
 </div>
 <ul class="simple">
-<li>Entry Point API V1: <a class="reference external" href="http://0.0.0.0:5000/api/v1">http://0.0.0.0:5000/api/v1</a></li>
+<li><dl class="first docutils">
+<dt>Entry Point API V1:</dt>
+<dd><a class="reference external" href="http://0.0.0.0:5000/api/v1">http://0.0.0.0:5000/api/v1</a></dd>
+</dl>
+</li>
 </ul>
 <div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
    <span class="nt">&quot;api_version&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
@@ -186,7 +199,11 @@ rest-mqtt-proxy.</p>
 <div class="section" id="rest-resource-subscriptions">
 <h2>REST Resource: Subscriptions<a class="headerlink" href="#rest-resource-subscriptions" title="Permalink to this headline">¶</a></h2>
 <ul class="simple">
-<li>List all Topic-Subscriptions: <a class="reference external" href="http://0.0.0.0:5000/api/v1/subscriptions">http://0.0.0.0:5000/api/v1/subscriptions</a></li>
+<li><dl class="first docutils">
+<dt>List all Topic-Subscriptions:</dt>
+<dd><a class="reference external" href="http://0.0.0.0:5000/api/v1/subscriptions">http://0.0.0.0:5000/api/v1/subscriptions</a></dd>
+</dl>
+</li>
 </ul>
 <div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
    <span class="nt">&quot;subscriptions_list&quot;</span><span class="p">:</span>
@@ -223,7 +240,11 @@ rest-mqtt-proxy.</p>
 </pre></div>
 </div>
 <ul class="simple">
-<li>Get details about a specify Topic-Subscription: <a class="reference external" href="http://0.0.0.0:5000/api/v1/subscription/details">http://0.0.0.0:5000/api/v1/subscription/details</a>/&lt;uuid&gt;</li>
+<li><dl class="first docutils">
+<dt>Get details about a specify Topic-Subscription</dt>
+<dd><a class="reference external" href="http://0.0.0.0:5000/api/v1/subscription/details">http://0.0.0.0:5000/api/v1/subscription/details</a>/&lt;uuid&gt;</dd>
+</dl>
+</li>
 </ul>
 <div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">[{</span>
    <span class="nt">&quot;kind&quot;</span><span class="p">:</span> <span class="s2">&quot;MQTTSubscriptionV1&quot;</span><span class="p">,</span>
@@ -244,10 +265,83 @@ rest-mqtt-proxy.</p>
 <div class="section" id="rest-resource-mappings">
 <h2>REST Resource: Mappings<a class="headerlink" href="#rest-resource-mappings" title="Permalink to this headline">¶</a></h2>
 <ul class="simple">
-<li>List all Topic-Mappings: <a class="reference external" href="http://0.0.0.0:5000/api/v1/topics">http://0.0.0.0:5000/api/v1/topics</a></li>
-<li>Get details about a specify Topic-Mapping: <a class="reference external" href="http://0.0.0.0:5000/api/v1/topic/details">http://0.0.0.0:5000/api/v1/topic/details</a>/&lt;uuid&gt;</li>
-<li>Get value of a specify Topic-Mapping: <a class="reference external" href="http://0.0.0.0:5000/api/v1/topic/value">http://0.0.0.0:5000/api/v1/topic/value</a>/&lt;uuid&gt;</li>
+<li><dl class="first docutils">
+<dt>List all Topic-Mappings</dt>
+<dd><a class="reference external" href="http://0.0.0.0:5000/api/v1/topics">http://0.0.0.0:5000/api/v1/topics</a></dd>
+</dl>
+</li>
 </ul>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+  <span class="nt">&quot;topic_mapping_list&quot;</span><span class="p">:</span> <span class="p">[</span>
+    <span class="p">{</span>
+      <span class="nt">&quot;kind&quot;</span><span class="p">:</span> <span class="s2">&quot;TopicMappingV1&quot;</span><span class="p">,</span>
+      <span class="nt">&quot;topic&quot;</span><span class="p">:</span> <span class="s2">&quot;test-a/topic/test&quot;</span><span class="p">,</span>
+      <span class="nt">&quot;uuid&quot;</span><span class="p">:</span> <span class="s2">&quot;69e0fbc7-4596-54d9-a874-2bcfeadec724&quot;</span><span class="p">,</span>
+      <span class="nt">&quot;sub_uuid&quot;</span><span class="p">:</span> <span class="s2">&quot;ac106f72-7801-5cdb-9c01-031e3bdac474&quot;</span><span class="p">,</span>
+      <span class="nt">&quot;last_value&quot;</span><span class="p">:</span> <span class="s2">&quot;123.123&quot;</span><span class="p">,</span>
+      <span class="nt">&quot;details&quot;</span><span class="p">:</span> <span class="s2">&quot;http://0.0.0.0:5000/api/v1/topic/details/69e0fbc7-4596-54d9-a874-2bcfeadec724&quot;</span><span class="p">,</span>
+      <span class="nt">&quot;uri&quot;</span><span class="p">:</span> <span class="s2">&quot;http://0.0.0.0:5000/api/v1/topic/value/69e0fbc7-4596-54d9-a874-2bcfeadec724&quot;</span>
+    <span class="p">},</span>
+    <span class="p">{</span>
+      <span class="nt">&quot;kind&quot;</span><span class="p">:</span> <span class="s2">&quot;TopicMappingV1&quot;</span><span class="p">,</span>
+      <span class="nt">&quot;topic&quot;</span><span class="p">:</span> <span class="s2">&quot;test-b/topic/test&quot;</span><span class="p">,</span>
+      <span class="nt">&quot;uuid&quot;</span><span class="p">:</span> <span class="s2">&quot;7516ef28-4509-5f16-802b-6af81c55bc9b&quot;</span><span class="p">,</span>
+      <span class="nt">&quot;sub_uuid&quot;</span><span class="p">:</span> <span class="s2">&quot;4259fc75-2ba6-56c2-902b-a88b8990bd49&quot;</span><span class="p">,</span>
+      <span class="nt">&quot;last_value&quot;</span><span class="p">:</span> <span class="s2">&quot;123.123&quot;</span><span class="p">,</span>
+      <span class="nt">&quot;details&quot;</span><span class="p">:</span> <span class="s2">&quot;http://0.0.0.0:5000/api/v1/topic/details/7516ef28-4509-5f16-802b-6af81c55bc9b&quot;</span><span class="p">,</span>
+      <span class="nt">&quot;uri&quot;</span><span class="p">:</span> <span class="s2">&quot;http://0.0.0.0:5000/api/v1/topic/value/7516ef28-4509-5f16-802b-6af81c55bc9b&quot;</span>
+    <span class="p">},</span>
+    <span class="p">{</span>
+      <span class="nt">&quot;kind&quot;</span><span class="p">:</span> <span class="s2">&quot;TopicMappingV1&quot;</span><span class="p">,</span>
+      <span class="nt">&quot;topic&quot;</span><span class="p">:</span> <span class="s2">&quot;test-b/topic/test-other&quot;</span><span class="p">,</span>
+      <span class="nt">&quot;uuid&quot;</span><span class="p">:</span> <span class="s2">&quot;65085844-d7d4-55aa-877e-694fb387e488&quot;</span><span class="p">,</span>
+      <span class="nt">&quot;sub_uuid&quot;</span><span class="p">:</span> <span class="s2">&quot;4259fc75-2ba6-56c2-902b-a88b8990bd49&quot;</span><span class="p">,</span>
+      <span class="nt">&quot;last_value&quot;</span><span class="p">:</span> <span class="s2">&quot;Hello World&quot;</span><span class="p">,</span>
+      <span class="nt">&quot;details&quot;</span><span class="p">:</span> <span class="s2">&quot;http://0.0.0.0:5000/api/v1/topic/details/65085844-d7d4-55aa-877e-694fb387e488&quot;</span><span class="p">,</span>
+      <span class="nt">&quot;uri&quot;</span><span class="p">:</span> <span class="s2">&quot;http://0.0.0.0:5000/api/v1/topic/value/65085844-d7d4-55aa-877e-694fb387e488&quot;</span>
+    <span class="p">}</span>
+  <span class="p">]</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<ul class="simple">
+<li><dl class="first docutils">
+<dt>Get details about a specify Topic-Mapping</dt>
+<dd><ul class="first last">
+<li>by uuid: <a class="reference external" href="http://0.0.0.0:5000/api/v1/topic/details">http://0.0.0.0:5000/api/v1/topic/details</a>/&lt;uuid&gt;</li>
+<li>by Topic: <a class="reference external" href="http://0.0.0.0:5000/api/v1/topic/details">http://0.0.0.0:5000/api/v1/topic/details</a>/&lt;topic&gt;</li>
+</ul>
+</dd>
+</dl>
+</li>
+</ul>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">[</span>
+  <span class="p">{</span>
+    <span class="nt">&quot;kind&quot;</span><span class="p">:</span> <span class="s2">&quot;TopicMappingV1&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;topic&quot;</span><span class="p">:</span> <span class="s2">&quot;test-a/topic/test&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;uuid&quot;</span><span class="p">:</span> <span class="s2">&quot;69e0fbc7-4596-54d9-a874-2bcfeadec724&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;sub_uuid&quot;</span><span class="p">:</span> <span class="s2">&quot;ac106f72-7801-5cdb-9c01-031e3bdac474&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;last_value&quot;</span><span class="p">:</span> <span class="s2">&quot;123.12&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;details&quot;</span><span class="p">:</span> <span class="s2">&quot;http://0.0.0.0:5000/api/v1/topic/details/69e0fbc7-4596-54d9-a874-2bcfeadec724&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;uri&quot;</span><span class="p">:</span> <span class="s2">&quot;http://0.0.0.0:5000/api/v1/topic/value/69e0fbc7-4596-54d9-a874-2bcfeadec724&quot;</span>
+  <span class="p">}</span>
+<span class="p">]</span>
+</pre></div>
+</div>
+<ul class="simple">
+<li><dl class="first docutils">
+<dt>Get value of a specify Topic-Mapping</dt>
+<dd><ul class="first last">
+<li>by uuid: <a class="reference external" href="http://0.0.0.0:5000/api/v1/topic/value">http://0.0.0.0:5000/api/v1/topic/value</a>/&lt;uuid&gt;</li>
+<li>by Topic: <a class="reference external" href="http://0.0.0.0:5000/api/v1/topic/value">http://0.0.0.0:5000/api/v1/topic/value</a>/&lt;topic&gt;</li>
+</ul>
+</dd>
+</dl>
+</li>
+</ul>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="mf">123.123</span>
+</pre></div>
+</div>
 </div>
 </div>
 
@@ -271,7 +365,7 @@ rest-mqtt-proxy.</p>
 
   <div role="contentinfo">
     <p>
-        &copy; Copyright 2018, kungalex
+        &copy; Copyright 2018, Alexander Kleinschmidt
 
     </p>
   </div>

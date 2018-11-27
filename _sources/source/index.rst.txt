@@ -16,8 +16,20 @@ This section contains a description of the important class Implementations.
 .. toctree::
    :maxdepth: 2
 
+
+.. automodule:: models
+    :members: TopicMappingV1, MQTTSubscriptionV1
+
+.. automodule:: main
+    :members: create_app, create_mqtt_client, create_persistent_client
+
+
 .. automodule:: callbacks
     :members:
 
-.. automodule:: main
-    :members: create_app
+.. automodule:: mqtt_base_client
+    :members:
+
+.. automodule:: influx_base_client
+    :members:
+

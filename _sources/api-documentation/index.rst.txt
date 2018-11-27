@@ -16,7 +16,8 @@ rest-mqtt-proxy.
 REST Resource: API
 ------------------
 
-* List all API versions: http://0.0.0.0:5000/
+* List all API versions:
+   http://0.0.0.0:5000/
 
 .. code-block:: json
 
@@ -31,7 +32,8 @@ REST Resource: API
    }
 
 
-* Entry Point API V1: http://0.0.0.0:5000/api/v1
+* Entry Point API V1:
+   http://0.0.0.0:5000/api/v1
 
 .. code-block:: json
 
@@ -51,7 +53,8 @@ REST Resource: API
 REST Resource: Subscriptions
 ----------------------------
 
-* List all Topic-Subscriptions: http://0.0.0.0:5000/api/v1/subscriptions
+* List all Topic-Subscriptions:
+   http://0.0.0.0:5000/api/v1/subscriptions
 
 .. code-block:: json
 
@@ -89,7 +92,8 @@ REST Resource: Subscriptions
    }
 
 
-* Get details about a specify Topic-Subscription: http://0.0.0.0:5000/api/v1/subscription/details/<uuid>
+* Get details about a specify Topic-Subscription
+   http://0.0.0.0:5000/api/v1/subscription/details/<uuid>
 
 .. code-block:: json
 
@@ -113,10 +117,67 @@ REST Resource: Mappings
 -----------------------
 
 
-* List all Topic-Mappings: http://0.0.0.0:5000/api/v1/topics
+* List all Topic-Mappings
+   http://0.0.0.0:5000/api/v1/topics
 
-* Get details about a specify Topic-Mapping: http://0.0.0.0:5000/api/v1/topic/details/<uuid>
+.. code-block:: json
 
-* Get value of a specify Topic-Mapping: http://0.0.0.0:5000/api/v1/topic/value/<uuid>
 
+   {
+     "topic_mapping_list": [
+       {
+         "kind": "TopicMappingV1",
+         "topic": "test-a/topic/test",
+         "uuid": "69e0fbc7-4596-54d9-a874-2bcfeadec724",
+         "sub_uuid": "ac106f72-7801-5cdb-9c01-031e3bdac474",
+         "last_value": "123.123",
+         "details": "http://0.0.0.0:5000/api/v1/topic/details/69e0fbc7-4596-54d9-a874-2bcfeadec724",
+         "uri": "http://0.0.0.0:5000/api/v1/topic/value/69e0fbc7-4596-54d9-a874-2bcfeadec724"
+       },
+       {
+         "kind": "TopicMappingV1",
+         "topic": "test-b/topic/test",
+         "uuid": "7516ef28-4509-5f16-802b-6af81c55bc9b",
+         "sub_uuid": "4259fc75-2ba6-56c2-902b-a88b8990bd49",
+         "last_value": "123.123",
+         "details": "http://0.0.0.0:5000/api/v1/topic/details/7516ef28-4509-5f16-802b-6af81c55bc9b",
+         "uri": "http://0.0.0.0:5000/api/v1/topic/value/7516ef28-4509-5f16-802b-6af81c55bc9b"
+       },
+       {
+         "kind": "TopicMappingV1",
+         "topic": "test-b/topic/test-other",
+         "uuid": "65085844-d7d4-55aa-877e-694fb387e488",
+         "sub_uuid": "4259fc75-2ba6-56c2-902b-a88b8990bd49",
+         "last_value": "Hello World",
+         "details": "http://0.0.0.0:5000/api/v1/topic/details/65085844-d7d4-55aa-877e-694fb387e488",
+         "uri": "http://0.0.0.0:5000/api/v1/topic/value/65085844-d7d4-55aa-877e-694fb387e488"
+       }
+     ]
+   }
+
+* Get details about a specify Topic-Mapping
+   + by uuid: http://0.0.0.0:5000/api/v1/topic/details/<uuid>
+   + by Topic: http://0.0.0.0:5000/api/v1/topic/details/<topic>
+
+.. code-block:: json
+
+   [
+     {
+       "kind": "TopicMappingV1",
+       "topic": "test-a/topic/test",
+       "uuid": "69e0fbc7-4596-54d9-a874-2bcfeadec724",
+       "sub_uuid": "ac106f72-7801-5cdb-9c01-031e3bdac474",
+       "last_value": "123.12",
+       "details": "http://0.0.0.0:5000/api/v1/topic/details/69e0fbc7-4596-54d9-a874-2bcfeadec724",
+       "uri": "http://0.0.0.0:5000/api/v1/topic/value/69e0fbc7-4596-54d9-a874-2bcfeadec724"
+     }
+   ]
+
+* Get value of a specify Topic-Mapping
+   + by uuid: http://0.0.0.0:5000/api/v1/topic/value/<uuid>
+   + by Topic: http://0.0.0.0:5000/api/v1/topic/value/<topic>
+
+.. code-block:: json
+
+   123.123
 

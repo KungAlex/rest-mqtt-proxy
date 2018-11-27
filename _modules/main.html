@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>main &mdash; rest-mqtt-proxy 1.0.0 documentation</title>
+  <title>main &mdash; rest-mqtt-proxy 1.0.0 beta documentation</title>
   
 
   
@@ -55,6 +55,10 @@
           
             
             
+              <div class="version">
+                1.0.0 beta
+              </div>
+            
           
 
           
@@ -78,6 +82,7 @@
             
               <p class="caption"><span class="caption-text">Contents:</span></p>
 <ul>
+<li class="toctree-l1"><a class="reference internal" href="../overview/index.html">Overview</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../readme_include.html">Getting-Started</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../config/index.html">Config</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../api-documentation/index.html">API Documentation</a></li>
@@ -201,7 +206,7 @@
     <span class="k">return</span> <span class="n">app</span></div>
 
 
-<span class="k">def</span> <span class="nf">create_persistent_client</span><span class="p">():</span>
+<div class="viewcode-block" id="create_persistent_client"><a class="viewcode-back" href="../source/index.html#main.create_persistent_client">[docs]</a><span class="k">def</span> <span class="nf">create_persistent_client</span><span class="p">():</span>
     <span class="sd">&quot;&quot;&quot;</span>
 
 <span class="sd">    :return:</span>
@@ -222,10 +227,10 @@
         <span class="n">t_influxdb_client</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
 
     <span class="k">except</span> <span class="ne">KeyError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
-        <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
+        <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">e</span><span class="p">)</span></div>
 
 
-<span class="k">def</span> <span class="nf">create_mqtt_client</span><span class="p">():</span>
+<div class="viewcode-block" id="create_mqtt_client"><a class="viewcode-back" href="../source/index.html#main.create_mqtt_client">[docs]</a><span class="k">def</span> <span class="nf">create_mqtt_client</span><span class="p">():</span>
     <span class="sd">&quot;&quot;&quot;</span>
 
 <span class="sd">    :return:</span>
@@ -249,7 +254,7 @@
         <span class="n">t_mqtt_client</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
 
     <span class="k">except</span> <span class="ne">KeyError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
-        <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
+        <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">e</span><span class="p">)</span></div>
 
 
 <span class="n">app</span> <span class="o">=</span> <span class="n">create_app</span><span class="p">()</span>
@@ -371,7 +376,7 @@
             <span class="n">run_event_handlers</span><span class="p">(</span><span class="n">topic_sub</span><span class="p">,</span> <span class="n">msg</span><span class="p">)</span>
 
 
-<span class="k">class</span> <span class="nc">Home</span><span class="p">(</span><span class="n">Resource</span><span class="p">):</span>
+<div class="viewcode-block" id="Home"><a class="viewcode-back" href="../source/index.html#main.Home">[docs]</a><span class="k">class</span> <span class="nc">Home</span><span class="p">(</span><span class="n">Resource</span><span class="p">):</span>
     <span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="p">{</span>
             <span class="s1">&#39;msg&#39;</span><span class="p">:</span> <span class="s1">&#39;Welcome to rest-mqtt-proxy prototype!&#39;</span><span class="p">,</span>
@@ -380,41 +385,41 @@
                     <span class="s1">&#39;api_v1&#39;</span><span class="p">:</span> <span class="n">url_for</span><span class="p">(</span><span class="s1">&#39;api_v1&#39;</span><span class="p">,</span> <span class="n">_external</span><span class="o">=</span><span class="kc">True</span><span class="p">),</span>
                     <span class="s1">&#39;api_v2&#39;</span><span class="p">:</span> <span class="s1">&#39;TODO&#39;</span>
                 <span class="p">}</span>
-        <span class="p">}</span>
+        <span class="p">}</span></div>
 
 
-<span class="k">class</span> <span class="nc">ApiV1</span><span class="p">(</span><span class="n">Resource</span><span class="p">):</span>
+<div class="viewcode-block" id="ApiV1"><a class="viewcode-back" href="../source/index.html#main.ApiV1">[docs]</a><span class="k">class</span> <span class="nc">ApiV1</span><span class="p">(</span><span class="n">Resource</span><span class="p">):</span>
     <span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="p">{</span><span class="s1">&#39;api_version&#39;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="s1">&#39;urls&#39;</span><span class="p">:</span> <span class="p">{</span>
             <span class="s1">&#39;topic_mapping_list&#39;</span><span class="p">:</span> <span class="n">url_for</span><span class="p">(</span><span class="s1">&#39;api_topic_mapping_list&#39;</span><span class="p">,</span> <span class="n">_external</span><span class="o">=</span><span class="kc">True</span><span class="p">),</span>
             <span class="s1">&#39;subscriptions_list&#39;</span><span class="p">:</span> <span class="n">url_for</span><span class="p">(</span><span class="s1">&#39;api_subscription_list&#39;</span><span class="p">,</span> <span class="n">_external</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-        <span class="p">}}</span>
+        <span class="p">}}</span></div>
 
 
-<span class="k">class</span> <span class="nc">TopicMappingListApiV1</span><span class="p">(</span><span class="n">Resource</span><span class="p">):</span>
+<div class="viewcode-block" id="TopicMappingListApiV1"><a class="viewcode-back" href="../source/index.html#main.TopicMappingListApiV1">[docs]</a><span class="k">class</span> <span class="nc">TopicMappingListApiV1</span><span class="p">(</span><span class="n">Resource</span><span class="p">):</span>
 
     <span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">return</span> <span class="p">{</span><span class="s1">&#39;topic_mapping_list&#39;</span><span class="p">:</span> <span class="p">[</span><span class="n">marshal</span><span class="p">(</span><span class="n">topic</span><span class="p">,</span> <span class="n">topic_mapping_fields</span><span class="p">)</span> <span class="k">for</span> <span class="n">topic</span> <span class="ow">in</span> <span class="n">topic_mapping_list</span><span class="p">]}</span>
+        <span class="k">return</span> <span class="p">{</span><span class="s1">&#39;topic_mapping_list&#39;</span><span class="p">:</span> <span class="p">[</span><span class="n">marshal</span><span class="p">(</span><span class="n">topic</span><span class="p">,</span> <span class="n">topic_mapping_fields</span><span class="p">)</span> <span class="k">for</span> <span class="n">topic</span> <span class="ow">in</span> <span class="n">topic_mapping_list</span><span class="p">]}</span></div>
 
 
-<span class="k">class</span> <span class="nc">SubscriptionsListApiV1</span><span class="p">(</span><span class="n">Resource</span><span class="p">):</span>
+<div class="viewcode-block" id="SubscriptionsListApiV1"><a class="viewcode-back" href="../source/index.html#main.SubscriptionsListApiV1">[docs]</a><span class="k">class</span> <span class="nc">SubscriptionsListApiV1</span><span class="p">(</span><span class="n">Resource</span><span class="p">):</span>
 
     <span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="p">{</span><span class="s1">&#39;subscriptions_list&#39;</span><span class="p">:</span> <span class="p">[</span><span class="n">marshal</span><span class="p">(</span><span class="n">subscription</span><span class="p">,</span> <span class="n">subscription_fields</span><span class="p">)</span> <span class="k">for</span> <span class="n">subscription</span> <span class="ow">in</span>
-                                       <span class="n">subscriptions_list</span><span class="p">]}</span>
+                                       <span class="n">subscriptions_list</span><span class="p">]}</span></div>
 
 
-<span class="k">class</span> <span class="nc">SubscriptionDetailsApiV1</span><span class="p">(</span><span class="n">Resource</span><span class="p">):</span>
+<div class="viewcode-block" id="SubscriptionDetailsApiV1"><a class="viewcode-back" href="../source/index.html#main.SubscriptionDetailsApiV1">[docs]</a><span class="k">class</span> <span class="nc">SubscriptionDetailsApiV1</span><span class="p">(</span><span class="n">Resource</span><span class="p">):</span>
 
     <span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">uuid</span><span class="p">):</span>
         <span class="k">for</span> <span class="n">subscription</span> <span class="ow">in</span> <span class="n">subscriptions_list</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">subscription</span><span class="o">.</span><span class="n">uuid</span> <span class="o">==</span> <span class="n">uuid</span><span class="p">:</span>
                 <span class="k">return</span> <span class="n">marshal</span><span class="p">(</span><span class="n">subscription</span><span class="p">,</span> <span class="n">subscription_fields</span><span class="p">),</span>  <span class="c1"># TODO use marshal</span>
 
-        <span class="n">abort</span><span class="p">(</span><span class="mi">404</span><span class="p">)</span>
+        <span class="n">abort</span><span class="p">(</span><span class="mi">404</span><span class="p">)</span></div>
 
 
-<span class="k">class</span> <span class="nc">TopicValueApiV1</span><span class="p">(</span><span class="n">Resource</span><span class="p">):</span>
+<div class="viewcode-block" id="TopicValueApiV1"><a class="viewcode-back" href="../source/index.html#main.TopicValueApiV1">[docs]</a><span class="k">class</span> <span class="nc">TopicValueApiV1</span><span class="p">(</span><span class="n">Resource</span><span class="p">):</span>
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">reqparse</span> <span class="o">=</span> <span class="n">reqparse</span><span class="o">.</span><span class="n">RequestParser</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">reqparse</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s1">&#39;last_value&#39;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span> <span class="n">location</span><span class="o">=</span><span class="s1">&#39;json&#39;</span><span class="p">)</span>
@@ -451,20 +456,20 @@
                 <span class="n">topic_mapping_list</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">topic</span><span class="p">)</span>
                 <span class="k">return</span> <span class="p">{</span><span class="s1">&#39;result&#39;</span><span class="p">:</span> <span class="kc">True</span><span class="p">},</span> <span class="mi">200</span>
 
-        <span class="n">abort</span><span class="p">(</span><span class="mi">404</span><span class="p">)</span>
+        <span class="n">abort</span><span class="p">(</span><span class="mi">404</span><span class="p">)</span></div>
 
 
-<span class="k">class</span> <span class="nc">TopicDetailsApiV1</span><span class="p">(</span><span class="n">Resource</span><span class="p">):</span>
+<div class="viewcode-block" id="TopicDetailsApiV1"><a class="viewcode-back" href="../source/index.html#main.TopicDetailsApiV1">[docs]</a><span class="k">class</span> <span class="nc">TopicDetailsApiV1</span><span class="p">(</span><span class="n">Resource</span><span class="p">):</span>
 
     <span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">uuid</span><span class="p">):</span>
         <span class="k">for</span> <span class="n">mapping</span> <span class="ow">in</span> <span class="n">topic_mapping_list</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">mapping</span><span class="o">.</span><span class="n">uuid</span> <span class="o">==</span> <span class="n">uuid</span><span class="p">:</span>
                 <span class="k">return</span> <span class="n">marshal</span><span class="p">(</span><span class="n">mapping</span><span class="p">,</span> <span class="n">topic_mapping_fields</span><span class="p">),</span>  <span class="c1"># TODO use marshal</span>
 
-        <span class="n">abort</span><span class="p">(</span><span class="mi">404</span><span class="p">)</span>
+        <span class="n">abort</span><span class="p">(</span><span class="mi">404</span><span class="p">)</span></div>
 
 
-<span class="k">class</span> <span class="nc">MappingValueApiV1</span><span class="p">(</span><span class="n">Resource</span><span class="p">):</span>
+<div class="viewcode-block" id="MappingValueApiV1"><a class="viewcode-back" href="../source/index.html#main.MappingValueApiV1">[docs]</a><span class="k">class</span> <span class="nc">MappingValueApiV1</span><span class="p">(</span><span class="n">Resource</span><span class="p">):</span>
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">reqparse</span> <span class="o">=</span> <span class="n">reqparse</span><span class="o">.</span><span class="n">RequestParser</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">reqparse</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s1">&#39;last_value&#39;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span> <span class="n">location</span><span class="o">=</span><span class="s1">&#39;json&#39;</span><span class="p">)</span>
@@ -478,10 +483,10 @@
                 <span class="c1"># return marshal(mapping, topic_fields), 200 # , envelope=str(mapping.uuid)</span>
                 <span class="k">return</span> <span class="n">mapping</span><span class="o">.</span><span class="n">last_value</span><span class="p">,</span> <span class="mi">200</span>
 
-        <span class="n">abort</span><span class="p">(</span><span class="mi">404</span><span class="p">)</span>
+        <span class="n">abort</span><span class="p">(</span><span class="mi">404</span><span class="p">)</span></div>
 
 
-<span class="k">class</span> <span class="nc">MappingDetailsApiV1</span><span class="p">(</span><span class="n">Resource</span><span class="p">):</span>
+<div class="viewcode-block" id="MappingDetailsApiV1"><a class="viewcode-back" href="../source/index.html#main.MappingDetailsApiV1">[docs]</a><span class="k">class</span> <span class="nc">MappingDetailsApiV1</span><span class="p">(</span><span class="n">Resource</span><span class="p">):</span>
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">reqparse</span> <span class="o">=</span> <span class="n">reqparse</span><span class="o">.</span><span class="n">RequestParser</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">reqparse</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s1">&#39;last_value&#39;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span> <span class="n">location</span><span class="o">=</span><span class="s1">&#39;json&#39;</span><span class="p">)</span>
@@ -493,7 +498,7 @@
             <span class="k">if</span> <span class="n">mapping</span><span class="o">.</span><span class="n">topic</span> <span class="o">==</span> <span class="n">topic</span><span class="p">:</span>
                 <span class="k">return</span> <span class="n">marshal</span><span class="p">(</span><span class="n">mapping</span><span class="p">,</span> <span class="n">topic_mapping_fields</span><span class="p">),</span> <span class="mi">200</span>  <span class="c1"># , envelope=str(mapping.uuid)</span>
 
-        <span class="n">abort</span><span class="p">(</span><span class="mi">404</span><span class="p">)</span>
+        <span class="n">abort</span><span class="p">(</span><span class="mi">404</span><span class="p">)</span></div>
 
 
 <span class="c1"># Add API Resources</span>
@@ -528,7 +533,7 @@
 
   <div role="contentinfo">
     <p>
-        &copy; Copyright 2018, kungalex
+        &copy; Copyright 2018, Alexander Kleinschmidt
 
     </p>
   </div>
