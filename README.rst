@@ -1,3 +1,6 @@
+.. image:: https://travis-ci.org/KungAlex/rest-mqtt-proxy.svg?branch=master
+    :target: https://travis-ci.org/KungAlex/rest-mqtt-proxy
+
 
 =================
 rest-mqtt-proxy
