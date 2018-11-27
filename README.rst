@@ -119,6 +119,9 @@ Kubernetes
 For more information about kubernetes see: https://kubernetes.io/
 
 
+License (MIT)
+-------------
 
-"This project is licensed under the terms of the MIT license."
+This project is licensed under the terms of the MIT license.
+
 Copyright (c) 2018 Alexander Kleinschmidt
