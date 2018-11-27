@@ -47,5 +47,5 @@ release: build-nc publish ## Release Container-Image (build and publish)
 publish: ## Publish Container-Image
 	docker push $(DOCKER_IMAGE):$(DOCKER_TAG)
 
-
-
+compose: ## Docker-compose up
+	docker-compose up
