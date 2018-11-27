@@ -227,7 +227,7 @@ def run_msq_queue():
 class Home(Resource):
     def get(self):
         return {
-            'msg': 'Welcome to a Python Http-Mqtt Proxy!',
+            'msg': 'Welcome to rest-mqtt-proxy prototype!',
             'urls':
                 {
                     'api_v1': url_for('api_v1', _external=True),
