@@ -14,15 +14,13 @@ This is the full technical documentation for https://github.com/KungAlex/rest-mq
 a source of references when seeking help with the project.
 
 
-.. include:: ./overview/index.rst
-
-
 
 .. toctree::
    :maxdepth: 2
    :titlesonly:
    :caption: Contents:
 
+   overview/index
    readme_include
    config/index
    api-documentation/index

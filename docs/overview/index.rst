@@ -12,8 +12,13 @@ This section contains Information about implementation Details and the basic Sys
 
 
 .. figure:: diagramm.png
-   :scale: 100 %
+   :scale: 80 %
    :alt: Docker
 
 
 TODO: Describe Workflow, Threads etc.
+
+
+.. figure:: uml_sequenz_diagram.png
+   :scale: 70 %
+   :alt: Docker

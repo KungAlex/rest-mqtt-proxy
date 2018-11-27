@@ -20,13 +20,13 @@ sys.path.insert(0, os.path.abspath('../app'))
 # -- Project information -----------------------------------------------------
 
 project = 'rest-mqtt-proxy'
-copyright = '2018, kungalex'
+copyright = '2018, Alexander Kleinschmidt'
 author = 'kungalex'
 
 # The short X.Y version
-version = ''
+version = '1.0.0 beta'
 # The full version, including alpha/beta/rc tags
-release = '1.0.0'
+release = '1.0.0 beta'
 
 
 # -- General configuration ---------------------------------------------------
