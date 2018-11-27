@@ -1,3 +1,10 @@
+"""
+helper.py
+=========
+a simple helper function used for this project
+"""
+
+
 from threading import Thread
 from functools import wraps
 

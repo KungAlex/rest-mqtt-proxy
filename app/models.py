@@ -1,3 +1,10 @@
+"""
+models.py
+====================================
+All Model Classes for Resources
+"""
+
+
 import uuid
 import json
 from uuid import UUID

@@ -1,3 +1,10 @@
+"""
+influx_base_client.py
+====================================
+Base InfluxDB Client
+
+"""
+
 from influxdb import InfluxDBClient
 from influxdb.exceptions import InfluxDBClientError
 from helper import run_async
@@ -9,6 +16,10 @@ log = logging.getLogger(__name__)
 
 
 class InfluxDBBaseClient(object):
+    """
+    Base Class for InfluxDB Client
+
+    """
     client = None
     host = None
     port = None
@@ -16,6 +27,7 @@ class InfluxDBBaseClient(object):
 
     def __init__(self, host="localhost", port=8086, database="iot", persistent_queue=None):
         """
+        Init InfluxDB Client
 
         :param host:
         :param port:
@@ -31,6 +43,11 @@ class InfluxDBBaseClient(object):
         self.run_persistent_queue()
 
     def start_client(self):
+        """
+        Start InfluxDB Client
+
+        :return:
+        """
         log.info("run start_client()")
         try:
             self.client = InfluxDBClient(host=self.host, port=self.port, database=self.database)
@@ -44,7 +61,9 @@ class InfluxDBBaseClient(object):
     @run_async
     def run_persistent_queue(self):
         """
-        Subscribe
+        Start persistent queue for handle asynchronous callbacks
+
+        :return:
         """
         logging.info("run run_persistent_queue")
 

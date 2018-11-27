@@ -1,3 +1,9 @@
+"""
+mqtt_base_client.py
+====================================
+Main entry-point of this project
+"""
+
 import paho.mqtt.client as mqtt
 from helper import run_async
 import _thread
@@ -8,12 +14,22 @@ log = logging.getLogger(__name__)
 
 
 def on_subscribe_callback(client, userdata, mid, granted_qos):
+    """
+    on_subscribe callback
+
+    :param client:
+    :param userdata:
+    :param mid:
+    :param granted_qos:
+    :return:
+    """
     log.info("subscribe topic")
 
 
 def on_connect_callback(client, userdata, flags, rc):
     """
-    on_connect Callback
+    on_connect callback
+
     :param client: 
     :param userdata: 
     :param flags: 
@@ -25,7 +41,8 @@ def on_connect_callback(client, userdata, flags, rc):
 
 def on_message_callback(client, userdata, msg):
     """
-    on_message Callback
+    on_message callback
+
     :param client: 
     :param userdata: 
     :param msg: 
@@ -38,6 +55,7 @@ def on_message_callback(client, userdata, msg):
 def on_publish_callback(client, userdata, mid):
     """
     on_publish Callback
+
     :param client: 
     :param userdata: 
     :param mid: 
@@ -47,10 +65,15 @@ def on_publish_callback(client, userdata, mid):
 
 
 class BaseClient(object):
+    """
+    Base Class for MQTT-Client
+
+    """
     client = None
 
     def __init__(self, broker="iot.eclipse.org", port=1883, sub_queue=None, pub_queue=None, msg_queue=None, password=None, username=None):
         """
+        Init BaseClient
 
         :param broker:
         :param port:
@@ -98,7 +121,9 @@ class BaseClient(object):
     @run_async
     def start_sub_queue(self):
         """
-        Subscribe
+        Start subscribe queue for handel asynchronous callbacks
+
+        :return:
         """
 
         log.info("run: start_sub_queue()")
@@ -110,9 +135,10 @@ class BaseClient(object):
     @run_async
     def start_pub_queue(self):
         """
-        Publish
-        """
+        Start publish queue for handel asynchronous callbacks
 
+        :return:
+        """
         log.info("run: start_pub_queue()")
 
         while True:
