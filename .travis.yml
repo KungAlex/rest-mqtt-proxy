@@ -1,17 +1,15 @@
 sudo: required
-
 services:
-  - docker
-
+- docker
 script:
-  - 'make build-nc'
-  - 'make test-config'
-
+- make build-nc
+- make test-config
 after_success:
-  - if [[ "$TRAVIS_BRANCH" == "master" ]]; then
-      docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD ;
-      make publish ;
-    fi
-
+- if [[ "$TRAVIS_BRANCH" == "master" ]]; then docker login -u $DOCKER_USER -p $DOCKER_PASSWORD
+  ; make publish ; fi
 notifications:
   email: false
+env:
+  global:
+  - secure: YCtx4p9qAqeQl6bRz1Ab8UMaam+RFU6VXxAI/3MwBtjkVvBi8W+nSyKeeINpdTufopCcpZmurPGW8jaMP9KoZo9yBolz9k1q5dSfW5jo2qZsm+1uXGHRjR/+LAw4XenTxhAoltnAZKxjpbpW5S1clue5O7DBEeHifnfsifGvC1s/48FfTz9gwDUBeFcKKcl9IB008shVUns+JItrv5Iv3Sb7FdTYAwkrbvdSppnidb+wkbktYy32Tvh8oPKF6yVlY6Kex/cgHxjJG0HOSAIQIUft2MWKZUvRV9XnRDhrjAfDaiTxtubSMSxHFnp9SNNWac8CQdg0INCcZfdvC2pRW786bGnja9va9pY/XNKh2KEls6i1l28i6bHE1c/1k5gGMTQqPr/MiMwZDirRUgtaOzqdG+W/izZVOR1soZEx+HRDoorN0xH3tqxVJNaZzQq4+kjlGUGCjyjBp0mymQMhGYqsbhR75x3kd2sdnuZxU4enkW8dI3fGd+kH8/420ZN+1Wkjit8Y5qqcIj0ruo0LF63HktW1nGRIPelqOx1BQ8IV48X9hN4pP5XH6p/WBxDvWQcLzzcHx4zuJsgGUgEGeYlX3QguT4a9iM/1CMq8ICxtMqJGAHuagZjNMOpusYvAYnc7ThFPawWvBqOe4eBjKkHbIvJTYWT0+GnaIwq7fn4=
+  - secure: SQYgDhByiQgAW2acJrQjYUSBjUnuR07NhvqtQ+N1b7aVFvcxpEm6s14kMTQy0oIP7AsrKUh75VCqxAStsO05hyFRkbZTRVdXcJq2zDYyrm9cVzi4C53paedit8h8peimNCogvKTiLzJ5He9sUnUp/1ILLcfNzknZH8W6W0I8ZS3oIGTAV729q5pHhj89kRBGw6k9mOodhqelR6n+Svc+nHupA9rnuSelgIABACyUgTJTec83lGnqhqKQUyGeJP24zloeu155cFkY1nN0Oauq8WsJDQ3m5UFkkGYwXYpNO/8UQHRAY6E6nFcH9er+I5WLpprIs0cTiq7CArzBnCrOtJz+6Wy26d6VT2Dk72ao9AqzYKA697CpktjGT6MQN1vn+NgETOipuwY+G2c9dNG2CIgLek9tjgP8iL4nUAY1md/sg6VoqFvRXAqrqz1DD7eWRcaexJ0sbqojsjeDldwa0l0ttDLSNQ+fWrsBYlxNFEdFnMMg0HAfZa9hHtJwFT+RQwVbDii/LvJu7xWX5/LjpqO9vtQO5GFrqg1sXwuY+W1At6g7jIi/kZUx/Wf7h/dBoq5fhay5/n7mgzIkjFhv0T6RIfn4x7BRExEmNA1ei7YhMRTfyGbK3C37R3Re93AnpbE1rr+IyDovpqbbQOk4R295FcG30+/rBqMR/yPWRK8=
