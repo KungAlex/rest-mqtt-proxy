@@ -1,16 +1,16 @@
 #!/bin/bash
 
 cat <<EOF
-###############################################
-###                                         ###
-###        Welcome to Micronodes            ###
-###                                         ###
-###           rest-mqtt-proxy               ###
-###                                         ###
-###  for more information see:              ###
-###  - github.com/kungalex/rest-mqtt-proxy  ###
-###  - or docs.micronodes.io                ###
-###############################################
+#####################################################
+###                                               ###
+###      Welcome to rest-mqtt-proxy               ###
+###                                               ###
+###                                               ###
+###                                               ###
+###  for more information see:                    ###
+###  https://kungalex.github.io/rest-mqtt-proxy/  ###
+###                                               ###
+#####################################################
 EOF
 
 

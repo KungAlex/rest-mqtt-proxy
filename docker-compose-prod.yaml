@@ -12,8 +12,8 @@ services:
       - PRE_MAPPING_DIR=/srv/rest-mqtt-proxy/mappings
 
     volumes:
-      - ${PWD}/config/dev/config-dc.ini:/srv/rest-mqtt-proxy/config.ini:ro
-      - ${PWD}/config/dev/mappings/:/srv/rest-mqtt-proxy/mappings/:ro
+      - ${PWD}/config/prod/config-dc.ini:/srv/rest-mqtt-proxy/config.ini:ro
+      - ${PWD}/config/prod/mappings/:/srv/rest-mqtt-proxy/mappings/:ro
 
     ports:
      - "5000:5000"

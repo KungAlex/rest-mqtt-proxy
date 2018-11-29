@@ -1,5 +1,6 @@
 .idea
-config/prod
+config/prod/mappings/*
+config/prod/config.ini
 app/__pycache__/
 docs/_build
 docs/_static
