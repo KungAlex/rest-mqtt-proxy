@@ -3,7 +3,7 @@ main.py
 ====================================
 Main entry-point of this project
 """
-
+import datetime
 import queue
 import configparser
 import os
@@ -216,6 +216,8 @@ def run_msq_queue():
             if topic_mapping.topic == msg.topic:
 
                 to_add = False
+
+                topic_mapping.last_update = str(datetime.datetime.now())
 
                 try:
                     topic_mapping.last_value = json.loads(msg.payload.decode())

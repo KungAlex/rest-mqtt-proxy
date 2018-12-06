@@ -7,6 +7,7 @@ All Model Classes for Resources
 
 import uuid
 import json
+import datetime
 from uuid import UUID
 
 
@@ -69,12 +70,14 @@ class TopicMappingV1(object):
     topic = None
     sub_uuid = None
     last_value = None
+    last_update = None
 
     def __init__(self, topic , sub_uuid):
 
         self.uuid = uuid.uuid5(namespace=uuid.NAMESPACE_URL, name=topic)
         self.topic = topic
         self.sub_uuid = sub_uuid
+        self.last_update = str(datetime.datetime.now())
 
 
 
