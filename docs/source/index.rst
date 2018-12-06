@@ -9,7 +9,7 @@
 Source
 ======
 
-This section contains a description of the important class Implementations.
+This section contains descriptions about implementation details.
 
 
 
@@ -21,7 +21,7 @@ This section contains a description of the important class Implementations.
     :members: TopicMappingV1, MQTTSubscriptionV1
 
 .. automodule:: main
-    :members: create_app, create_mqtt_client, create_persistent_client
+    :members: Home, ApiV1, TopicMappingListApiV1, SubscriptionsListApiV1, SubscriptionDetailsApiV1, TopicValueApiV1, TopicDetailsApiV1, MappingValueApiV1, MappingDetailsApiV1, create_app, start_mqtt_client, start_persistent_client, create_mapping, run_msq_queue, run_event_handlers
 
 
 .. automodule:: callbacks

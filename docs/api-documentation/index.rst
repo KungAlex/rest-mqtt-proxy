@@ -9,8 +9,7 @@
 API Documentation
 =================
 
-This section contains the API-Dokumentation and basic use cases of
-rest-mqtt-proxy.
+This section contains the full API-Documentation.
 
 
 REST Resource: API

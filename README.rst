@@ -16,7 +16,7 @@ For the full technical documentation visit: https://kungalex.github.io/rest-mqtt
 
 Getting-Started
 ===============
-This section contains a Quick-Start Example that cover basic use cases of rest-mqtt-proxy.
+This section contains a Quick-Start example that cover basic use cases of rest-mqtt-proxy.
 You can use prebuild Docker image or build from source.
 
 
@@ -24,7 +24,7 @@ Requirements
 ------------
 
 
-Please make sure you have Docker installed.
+Please make sure you have Docker installed on your machine.
 
 .. code-block:: bash
 
@@ -73,9 +73,9 @@ Docker
 -------
 
 
-All configs can be made by mount local config files to the Docker-Container.
+All configs can be made by mount local config files into the Docker-Container.
 
-In *APP_CONFIG_FILE* are base config for the MQTT-Broker Connection and optional the InfluxDB config used for persistent Manager.
+In *APP_CONFIG_FILE* are base config for the MQTT-Broker connection and optional the InfluxDB config used as default persistent Manager.
 
 To configure what topics will be Subscribe by the Client-Thread use yaml files in *PRE_MAPPING_DIR*.
 
@@ -96,7 +96,7 @@ For an full config example please see :ref:`my-reference-label`.
 Docker-Compose
 --------------
 
-For an Base integration test there is docker-compose script that starts all Services like Mosquitto and InfluxDB as Docker on your localhost.
+For an base integration test there is a docker-compose script that starts all Services like Mosquitto and InfluxDB as Docker on your localhost.
 
 
 .. code-block:: bash

@@ -471,14 +471,18 @@ class MappingDetailsApiV1(Resource):
 api.add_resource(Home, '/', endpoint='api_home')
 api.add_resource(ApiV1, '/api/v1', endpoint='api_v1')
 
-# Topics
+# list all topics
 api.add_resource(TopicMappingListApiV1, '/api/v1/topics', endpoint='api_topic_mapping_list')
+
+# Topics by uuid
 api.add_resource(TopicDetailsApiV1, '/api/v1/topic/details/<uuid:uuid>', endpoint='api_topic_details')
 api.add_resource(TopicValueApiV1, '/api/v1/topic/value/<uuid:uuid>', endpoint='api_topic_value')
+
+# Topics by name
 api.add_resource(MappingDetailsApiV1, '/api/v1/topic/details/<path:topic>', endpoint='api_mapping_details')
 api.add_resource(MappingValueApiV1, '/api/v1/topic/value/<path:topic>', endpoint='api_mapping_value')
 
-# Subscription
+# Subscriptions
 api.add_resource(SubscriptionsListApiV1, '/api/v1/subscriptions', endpoint='api_subscription_list')
 api.add_resource(SubscriptionDetailsApiV1, '/api/v1/subscription/details/<uuid:uuid>',
                  endpoint='api_subscription_details')
