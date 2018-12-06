@@ -155,7 +155,7 @@
 <span class="sd">====================================</span>
 <span class="sd">Main entry-point of this project</span>
 <span class="sd">&quot;&quot;&quot;</span>
-
+<span class="kn">import</span> <span class="nn">datetime</span>
 <span class="kn">import</span> <span class="nn">queue</span>
 <span class="kn">import</span> <span class="nn">configparser</span>
 <span class="kn">import</span> <span class="nn">os</span>
@@ -192,22 +192,28 @@
 <span class="n">msg_queue</span> <span class="o">=</span> <span class="n">queue</span><span class="o">.</span><span class="n">Queue</span><span class="p">()</span>  <span class="c1"># Queue with incoming messages</span>
 <span class="n">persistent_queue</span> <span class="o">=</span> <span class="n">queue</span><span class="o">.</span><span class="n">Queue</span><span class="p">()</span> <span class="c1"># Queue for influxDB persistent manager</span>
 
+<span class="n">topic_mapping_list</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="n">subscriptions_list</span> <span class="o">=</span> <span class="p">[]</span>
+
 
 
 <div class="viewcode-block" id="create_app"><a class="viewcode-back" href="../source/index.html#main.create_app">[docs]</a><span class="k">def</span> <span class="nf">create_app</span><span class="p">():</span>
     <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Return Flask App Object</span>
+<span class="sd">    Start Main Application</span>
 
+<span class="sd">    :return: Flask-App Instance</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;run create_app()&quot;</span><span class="p">)</span>
     <span class="n">app</span> <span class="o">=</span> <span class="n">Flask</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
-    <span class="n">create_persistent_client</span><span class="p">()</span>
-    <span class="n">create_mqtt_client</span><span class="p">()</span>
+    <span class="n">start_mqtt_client</span><span class="p">()</span>
+    <span class="n">start_persistent_client</span><span class="p">()</span>
+    <span class="n">create_mapping</span><span class="p">()</span>
     <span class="k">return</span> <span class="n">app</span></div>
 
 
-<div class="viewcode-block" id="create_persistent_client"><a class="viewcode-back" href="../source/index.html#main.create_persistent_client">[docs]</a><span class="k">def</span> <span class="nf">create_persistent_client</span><span class="p">():</span>
+<div class="viewcode-block" id="start_persistent_client"><a class="viewcode-back" href="../source/index.html#main.start_persistent_client">[docs]</a><span class="k">def</span> <span class="nf">start_persistent_client</span><span class="p">():</span>
     <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Start an InfluxDB-Client in a new Thread.</span>
 
 <span class="sd">    :return:</span>
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -223,15 +229,20 @@
         <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="n">kwargs</span><span class="p">)</span>
 
         <span class="n">t_influxdb_client</span> <span class="o">=</span> <span class="n">threading</span><span class="o">.</span><span class="n">Thread</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;influxdb-client&#39;</span><span class="p">,</span> <span class="n">target</span><span class="o">=</span><span class="n">InfluxDBBaseClient</span><span class="p">,</span> <span class="n">kwargs</span><span class="o">=</span><span class="n">kwargs</span><span class="p">)</span>
-        <span class="n">t_influxdb_client</span><span class="o">.</span><span class="n">setDaemon</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
-        <span class="n">t_influxdb_client</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+        <span class="n">t_influxdb_client</span><span class="o">.</span><span class="n">daemon</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">t_influxdb_client</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+        <span class="k">except</span> <span class="p">(</span><span class="ne">KeyboardInterrupt</span><span class="p">,</span> <span class="ne">SystemExit</span><span class="p">):</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;terminate influxdb client thread&quot;</span><span class="p">)</span>
+
 
     <span class="k">except</span> <span class="ne">KeyError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
         <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">e</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="create_mqtt_client"><a class="viewcode-back" href="../source/index.html#main.create_mqtt_client">[docs]</a><span class="k">def</span> <span class="nf">create_mqtt_client</span><span class="p">():</span>
+<div class="viewcode-block" id="start_mqtt_client"><a class="viewcode-back" href="../source/index.html#main.start_mqtt_client">[docs]</a><span class="k">def</span> <span class="nf">start_mqtt_client</span><span class="p">():</span>
     <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Start an MQTT-Client in a new Thread.</span>
 
 <span class="sd">    :return:</span>
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -250,65 +261,76 @@
 
         <span class="c1"># Start MQTT-Client Thread</span>
         <span class="n">t_mqtt_client</span> <span class="o">=</span> <span class="n">threading</span><span class="o">.</span><span class="n">Thread</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;MQTT-Client&#39;</span><span class="p">,</span> <span class="n">target</span><span class="o">=</span><span class="n">BaseClient</span><span class="p">,</span> <span class="n">kwargs</span><span class="o">=</span><span class="n">kwargs</span><span class="p">)</span>
-        <span class="n">t_mqtt_client</span><span class="o">.</span><span class="n">setDaemon</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
-        <span class="n">t_mqtt_client</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+        <span class="n">t_mqtt_client</span><span class="o">.</span><span class="n">daemon</span> <span class="o">=</span> <span class="kc">True</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">t_mqtt_client</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+        <span class="k">except</span> <span class="p">(</span><span class="ne">KeyboardInterrupt</span><span class="p">,</span> <span class="ne">SystemExit</span><span class="p">):</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;terminate mqtt client thread&quot;</span><span class="p">)</span>
 
     <span class="k">except</span> <span class="ne">KeyError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
         <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">e</span><span class="p">)</span></div>
 
 
-<span class="n">app</span> <span class="o">=</span> <span class="n">create_app</span><span class="p">()</span>
-<span class="n">api</span> <span class="o">=</span> <span class="n">Api</span><span class="p">(</span><span class="n">app</span><span class="p">)</span>
+<div class="viewcode-block" id="create_mapping"><a class="viewcode-back" href="../source/index.html#main.create_mapping">[docs]</a><span class="k">def</span> <span class="nf">create_mapping</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Create MQTT-Resources Mapping</span>
 
-<span class="n">topic_mapping_list</span> <span class="o">=</span> <span class="p">[]</span>
-<span class="n">subscriptions_list</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="sd">    :return:</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="n">PRE_MAPPING_DIR</span><span class="p">)</span>
+
+    <span class="c1"># TODO</span>
+    <span class="k">for</span> <span class="n">file</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="n">PRE_MAPPING_DIR</span><span class="p">):</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">file</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">file</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;.yaml&quot;</span><span class="p">)</span> <span class="ow">or</span> <span class="n">file</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;.yml&quot;</span><span class="p">):</span>
+            <span class="n">yaml_file</span> <span class="o">=</span> <span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">PRE_MAPPING_DIR</span><span class="p">,</span> <span class="n">file</span><span class="p">))</span>
+            <span class="nb">print</span><span class="p">(</span><span class="n">yaml_file</span><span class="p">)</span>
+            <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">yaml_file</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">stream</span><span class="p">:</span>
+                <span class="n">yamls</span> <span class="o">=</span> <span class="n">yaml</span><span class="o">.</span><span class="n">load_all</span><span class="p">(</span><span class="n">stream</span><span class="p">)</span>
+                <span class="k">for</span> <span class="n">y</span> <span class="ow">in</span> <span class="n">yamls</span><span class="p">:</span>
+
+                    <span class="k">try</span><span class="p">:</span>
+
+                        <span class="n">kind</span> <span class="o">=</span> <span class="n">y</span><span class="p">[</span><span class="s1">&#39;kind&#39;</span><span class="p">]</span>
+
+                        <span class="c1"># TODO switch case alternative!</span>
+
+                        <span class="k">if</span> <span class="n">kind</span> <span class="o">==</span> <span class="s2">&quot;MQTTSubscriptionV1&quot;</span><span class="p">:</span>
+                            <span class="k">try</span><span class="p">:</span>
+                                <span class="n">sub</span> <span class="o">=</span> <span class="n">MQTTSubscriptionV1</span><span class="o">.</span><span class="n">load_yaml</span><span class="p">(</span><span class="n">yaml</span><span class="o">=</span><span class="n">y</span><span class="p">)</span>
+                                <span class="n">subscriptions_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">sub</span><span class="p">)</span>
+
+                            <span class="k">except</span> <span class="n">yaml</span><span class="o">.</span><span class="n">YAMLError</span> <span class="k">as</span> <span class="n">exc</span><span class="p">:</span>
+                                <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">exc</span><span class="p">)</span>
+                                <span class="c1"># TODO exceptions description#</span>
+
+                        <span class="k">if</span> <span class="n">kind</span> <span class="o">==</span> <span class="s2">&quot;MQTTSubscriptionV2&quot;</span><span class="p">:</span>
+                            <span class="k">try</span><span class="p">:</span>
+                                <span class="n">sub</span> <span class="o">=</span> <span class="n">MQTTSubscriptionV1</span><span class="o">.</span><span class="n">load_yaml</span><span class="p">(</span><span class="n">yaml</span><span class="o">=</span><span class="n">y</span><span class="p">)</span>
+                                <span class="n">subscriptions_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">sub</span><span class="p">)</span>
+
+                            <span class="k">except</span> <span class="n">yaml</span><span class="o">.</span><span class="n">YAMLError</span> <span class="k">as</span> <span class="n">exc</span><span class="p">:</span>
+                                <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">exc</span><span class="p">)</span>
+                                <span class="c1"># TODO exceptions description#</span>
+
+                    <span class="k">except</span> <span class="ne">KeyError</span> <span class="k">as</span> <span class="n">exc</span><span class="p">:</span>
+                        <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;KeyError: &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">exc</span><span class="p">))</span>
+
+    <span class="k">for</span> <span class="n">subscription</span> <span class="ow">in</span> <span class="n">subscriptions_list</span><span class="p">:</span>
+        <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="n">subscription</span><span class="o">.</span><span class="fm">__repr__</span><span class="p">())</span>
+        <span class="n">sub_queue</span><span class="o">.</span><span class="n">put</span><span class="p">(</span><span class="n">subscription</span><span class="o">.</span><span class="n">subregex</span><span class="p">)</span></div>
 
 
-<span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="n">PRE_MAPPING_DIR</span><span class="p">)</span>
+<div class="viewcode-block" id="run_event_handlers"><a class="viewcode-back" href="../source/index.html#main.run_event_handlers">[docs]</a><span class="k">def</span> <span class="nf">run_event_handlers</span><span class="p">(</span><span class="n">subscribtion</span><span class="p">,</span> <span class="n">msg</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Run defined Event-Handler for incoming massages</span>
 
-<span class="c1"># TODO</span>
-<span class="k">for</span> <span class="n">file</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="n">PRE_MAPPING_DIR</span><span class="p">):</span>
-    <span class="nb">print</span><span class="p">(</span><span class="n">file</span><span class="p">)</span>
-    <span class="k">if</span> <span class="n">file</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;.yaml&quot;</span><span class="p">)</span> <span class="ow">or</span> <span class="n">file</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;.yml&quot;</span><span class="p">):</span>
-        <span class="n">yaml_file</span> <span class="o">=</span> <span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">PRE_MAPPING_DIR</span><span class="p">,</span> <span class="n">file</span><span class="p">))</span>
-        <span class="nb">print</span><span class="p">(</span><span class="n">yaml_file</span><span class="p">)</span>
-        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">yaml_file</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">stream</span><span class="p">:</span>
-            <span class="n">yamls</span> <span class="o">=</span> <span class="n">yaml</span><span class="o">.</span><span class="n">load_all</span><span class="p">(</span><span class="n">stream</span><span class="p">)</span>
-            <span class="k">for</span> <span class="n">y</span> <span class="ow">in</span> <span class="n">yamls</span><span class="p">:</span>
-
-                <span class="k">try</span><span class="p">:</span>
-
-                    <span class="n">kind</span> <span class="o">=</span> <span class="n">y</span><span class="p">[</span><span class="s1">&#39;kind&#39;</span><span class="p">]</span>
-
-                    <span class="c1"># TODO switch case alternative!</span>
-
-                    <span class="k">if</span> <span class="n">kind</span> <span class="o">==</span> <span class="s2">&quot;MQTTSubscriptionV1&quot;</span><span class="p">:</span>
-                        <span class="k">try</span><span class="p">:</span>
-                            <span class="n">sub</span> <span class="o">=</span> <span class="n">MQTTSubscriptionV1</span><span class="o">.</span><span class="n">load_yaml</span><span class="p">(</span><span class="n">yaml</span><span class="o">=</span><span class="n">y</span><span class="p">)</span>
-                            <span class="n">subscriptions_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">sub</span><span class="p">)</span>
-
-                        <span class="k">except</span> <span class="n">yaml</span><span class="o">.</span><span class="n">YAMLError</span> <span class="k">as</span> <span class="n">exc</span><span class="p">:</span>
-                            <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">exc</span><span class="p">)</span>
-                            <span class="c1"># TODO exceptions description#</span>
-
-                    <span class="k">if</span> <span class="n">kind</span> <span class="o">==</span> <span class="s2">&quot;MQTTSubscriptionV2&quot;</span><span class="p">:</span>
-                        <span class="k">try</span><span class="p">:</span>
-                            <span class="n">sub</span> <span class="o">=</span> <span class="n">MQTTSubscriptionV1</span><span class="o">.</span><span class="n">load_yaml</span><span class="p">(</span><span class="n">yaml</span><span class="o">=</span><span class="n">y</span><span class="p">)</span>
-                            <span class="n">subscriptions_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">sub</span><span class="p">)</span>
-
-                        <span class="k">except</span> <span class="n">yaml</span><span class="o">.</span><span class="n">YAMLError</span> <span class="k">as</span> <span class="n">exc</span><span class="p">:</span>
-                            <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">exc</span><span class="p">)</span>
-                            <span class="c1"># TODO exceptions description#</span>
-
-                <span class="k">except</span> <span class="ne">KeyError</span> <span class="k">as</span> <span class="n">exc</span><span class="p">:</span>
-                    <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;KeyError: &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">exc</span><span class="p">))</span>
-
-<span class="k">for</span> <span class="n">subscription</span> <span class="ow">in</span> <span class="n">subscriptions_list</span><span class="p">:</span>
-    <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="n">subscription</span><span class="o">.</span><span class="fm">__repr__</span><span class="p">())</span>
-    <span class="n">sub_queue</span><span class="o">.</span><span class="n">put</span><span class="p">(</span><span class="n">subscription</span><span class="o">.</span><span class="n">subregex</span><span class="p">)</span>
-
-
-<span class="k">def</span> <span class="nf">run_event_handlers</span><span class="p">(</span><span class="n">subscribtion</span><span class="p">,</span> <span class="n">msg</span><span class="p">):</span>
+<span class="sd">    :param subscribtion:</span>
+<span class="sd">    :param msg:</span>
+<span class="sd">    :return:</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">try</span><span class="p">:</span>
         <span class="n">default_manager</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">Callbacks</span><span class="p">,</span> <span class="n">subscribtion</span><span class="o">.</span><span class="n">event_handlers</span><span class="p">[</span><span class="s1">&#39;default_manager&#39;</span><span class="p">])</span>
         <span class="k">if</span> <span class="n">default_manager</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
@@ -327,11 +349,16 @@
     <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
         <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;no persistent_manager &quot;</span><span class="p">)</span>
     <span class="k">except</span> <span class="ne">AttributeError</span><span class="p">:</span>
-        <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;no persistent_manager function define&quot;</span><span class="p">)</span>
+        <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;no persistent_manager function define&quot;</span><span class="p">)</span></div>
 
 
-<span class="nd">@run_async</span>
+<div class="viewcode-block" id="run_msq_queue"><a class="viewcode-back" href="../source/index.html#main.run_msq_queue">[docs]</a><span class="nd">@run_async</span>
 <span class="k">def</span> <span class="nf">run_msq_queue</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Run Queue for handle Resource-Mapping</span>
+
+<span class="sd">    :return:</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
         <span class="n">to_add</span> <span class="o">=</span> <span class="kc">True</span>  <span class="c1"># If True a new Topic mapping will be create and append to list</span>
         <span class="n">msg</span> <span class="o">=</span> <span class="n">msg_queue</span><span class="o">.</span><span class="n">get</span><span class="p">()</span>
@@ -341,6 +368,8 @@
             <span class="k">if</span> <span class="n">topic_mapping</span><span class="o">.</span><span class="n">topic</span> <span class="o">==</span> <span class="n">msg</span><span class="o">.</span><span class="n">topic</span><span class="p">:</span>
 
                 <span class="n">to_add</span> <span class="o">=</span> <span class="kc">False</span>
+
+                <span class="n">topic_mapping</span><span class="o">.</span><span class="n">last_update</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">())</span>
 
                 <span class="k">try</span><span class="p">:</span>
                     <span class="n">topic_mapping</span><span class="o">.</span><span class="n">last_value</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">msg</span><span class="o">.</span><span class="n">payload</span><span class="o">.</span><span class="n">decode</span><span class="p">())</span>
@@ -373,11 +402,23 @@
             <span class="n">topic_mapping_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">topic_mapping</span><span class="p">)</span>
 
             <span class="c1"># TODO run event_handlers (first time)</span>
-            <span class="n">run_event_handlers</span><span class="p">(</span><span class="n">topic_sub</span><span class="p">,</span> <span class="n">msg</span><span class="p">)</span>
+            <span class="n">run_event_handlers</span><span class="p">(</span><span class="n">topic_sub</span><span class="p">,</span> <span class="n">msg</span><span class="p">)</span></div>
+
+
+<span class="n">app</span> <span class="o">=</span> <span class="n">create_app</span><span class="p">()</span>
+<span class="n">api</span> <span class="o">=</span> <span class="n">Api</span><span class="p">(</span><span class="n">app</span><span class="p">)</span>
 
 
 <div class="viewcode-block" id="Home"><a class="viewcode-back" href="../source/index.html#main.Home">[docs]</a><span class="k">class</span> <span class="nc">Home</span><span class="p">(</span><span class="n">Resource</span><span class="p">):</span>
-    <span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Home</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+<div class="viewcode-block" id="Home.get"><a class="viewcode-back" href="../source/index.html#main.Home.get">[docs]</a>    <span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="p">{</span>
             <span class="s1">&#39;msg&#39;</span><span class="p">:</span> <span class="s1">&#39;Welcome to rest-mqtt-proxy prototype!&#39;</span><span class="p">,</span>
             <span class="s1">&#39;urls&#39;</span><span class="p">:</span>
@@ -385,56 +426,103 @@
                     <span class="s1">&#39;api_v1&#39;</span><span class="p">:</span> <span class="n">url_for</span><span class="p">(</span><span class="s1">&#39;api_v1&#39;</span><span class="p">,</span> <span class="n">_external</span><span class="o">=</span><span class="kc">True</span><span class="p">),</span>
                     <span class="s1">&#39;api_v2&#39;</span><span class="p">:</span> <span class="s1">&#39;TODO&#39;</span>
                 <span class="p">}</span>
-        <span class="p">}</span></div>
+        <span class="p">}</span></div></div>
 
 
 <div class="viewcode-block" id="ApiV1"><a class="viewcode-back" href="../source/index.html#main.ApiV1">[docs]</a><span class="k">class</span> <span class="nc">ApiV1</span><span class="p">(</span><span class="n">Resource</span><span class="p">):</span>
-    <span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    ApiV1</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+<div class="viewcode-block" id="ApiV1.get"><a class="viewcode-back" href="../source/index.html#main.ApiV1.get">[docs]</a>    <span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="p">{</span><span class="s1">&#39;api_version&#39;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="s1">&#39;urls&#39;</span><span class="p">:</span> <span class="p">{</span>
             <span class="s1">&#39;topic_mapping_list&#39;</span><span class="p">:</span> <span class="n">url_for</span><span class="p">(</span><span class="s1">&#39;api_topic_mapping_list&#39;</span><span class="p">,</span> <span class="n">_external</span><span class="o">=</span><span class="kc">True</span><span class="p">),</span>
             <span class="s1">&#39;subscriptions_list&#39;</span><span class="p">:</span> <span class="n">url_for</span><span class="p">(</span><span class="s1">&#39;api_subscription_list&#39;</span><span class="p">,</span> <span class="n">_external</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-        <span class="p">}}</span></div>
+        <span class="p">}}</span></div></div>
 
 
 <div class="viewcode-block" id="TopicMappingListApiV1"><a class="viewcode-back" href="../source/index.html#main.TopicMappingListApiV1">[docs]</a><span class="k">class</span> <span class="nc">TopicMappingListApiV1</span><span class="p">(</span><span class="n">Resource</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    TopicMappingListApiV1</span>
 
-    <span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">return</span> <span class="p">{</span><span class="s1">&#39;topic_mapping_list&#39;</span><span class="p">:</span> <span class="p">[</span><span class="n">marshal</span><span class="p">(</span><span class="n">topic</span><span class="p">,</span> <span class="n">topic_mapping_fields</span><span class="p">)</span> <span class="k">for</span> <span class="n">topic</span> <span class="ow">in</span> <span class="n">topic_mapping_list</span><span class="p">]}</span></div>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="TopicMappingListApiV1.get"><a class="viewcode-back" href="../source/index.html#main.TopicMappingListApiV1.get">[docs]</a>    <span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="p">{</span><span class="s1">&#39;topic_mapping_list&#39;</span><span class="p">:</span> <span class="p">[</span><span class="n">marshal</span><span class="p">(</span><span class="n">topic</span><span class="p">,</span> <span class="n">topic_mapping_fields</span><span class="p">)</span> <span class="k">for</span> <span class="n">topic</span> <span class="ow">in</span> <span class="n">topic_mapping_list</span><span class="p">]}</span></div></div>
 
 
 <div class="viewcode-block" id="SubscriptionsListApiV1"><a class="viewcode-back" href="../source/index.html#main.SubscriptionsListApiV1">[docs]</a><span class="k">class</span> <span class="nc">SubscriptionsListApiV1</span><span class="p">(</span><span class="n">Resource</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    SubscriptionsListApiV1</span>
 
-    <span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="SubscriptionsListApiV1.get"><a class="viewcode-back" href="../source/index.html#main.SubscriptionsListApiV1.get">[docs]</a>    <span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="p">{</span><span class="s1">&#39;subscriptions_list&#39;</span><span class="p">:</span> <span class="p">[</span><span class="n">marshal</span><span class="p">(</span><span class="n">subscription</span><span class="p">,</span> <span class="n">subscription_fields</span><span class="p">)</span> <span class="k">for</span> <span class="n">subscription</span> <span class="ow">in</span>
-                                       <span class="n">subscriptions_list</span><span class="p">]}</span></div>
+                                       <span class="n">subscriptions_list</span><span class="p">]}</span></div></div>
 
 
 <div class="viewcode-block" id="SubscriptionDetailsApiV1"><a class="viewcode-back" href="../source/index.html#main.SubscriptionDetailsApiV1">[docs]</a><span class="k">class</span> <span class="nc">SubscriptionDetailsApiV1</span><span class="p">(</span><span class="n">Resource</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    SubscriptionDetailsApiV1</span>
 
-    <span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">uuid</span><span class="p">):</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="SubscriptionDetailsApiV1.get"><a class="viewcode-back" href="../source/index.html#main.SubscriptionDetailsApiV1.get">[docs]</a>    <span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">uuid</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">        :param uuid:</span>
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">for</span> <span class="n">subscription</span> <span class="ow">in</span> <span class="n">subscriptions_list</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">subscription</span><span class="o">.</span><span class="n">uuid</span> <span class="o">==</span> <span class="n">uuid</span><span class="p">:</span>
                 <span class="k">return</span> <span class="n">marshal</span><span class="p">(</span><span class="n">subscription</span><span class="p">,</span> <span class="n">subscription_fields</span><span class="p">),</span>  <span class="c1"># TODO use marshal</span>
 
-        <span class="n">abort</span><span class="p">(</span><span class="mi">404</span><span class="p">)</span></div>
+        <span class="n">abort</span><span class="p">(</span><span class="mi">404</span><span class="p">)</span></div></div>
 
 
 <div class="viewcode-block" id="TopicValueApiV1"><a class="viewcode-back" href="../source/index.html#main.TopicValueApiV1">[docs]</a><span class="k">class</span> <span class="nc">TopicValueApiV1</span><span class="p">(</span><span class="n">Resource</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    TopicValueApiV1</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">reqparse</span> <span class="o">=</span> <span class="n">reqparse</span><span class="o">.</span><span class="n">RequestParser</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">reqparse</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s1">&#39;last_value&#39;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span> <span class="n">location</span><span class="o">=</span><span class="s1">&#39;json&#39;</span><span class="p">)</span>
 
         <span class="nb">super</span><span class="p">(</span><span class="n">TopicValueApiV1</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
 
-    <span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">uuid</span><span class="p">):</span>
+<div class="viewcode-block" id="TopicValueApiV1.get"><a class="viewcode-back" href="../source/index.html#main.TopicValueApiV1.get">[docs]</a>    <span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">uuid</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">        :param uuid:</span>
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">for</span> <span class="n">mapping</span> <span class="ow">in</span> <span class="n">topic_mapping_list</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">mapping</span><span class="o">.</span><span class="n">uuid</span> <span class="o">==</span> <span class="n">uuid</span><span class="p">:</span>
                 <span class="c1"># return marshal(mapping, topic_fields),  # TODO use marshal</span>
                 <span class="k">return</span> <span class="n">mapping</span><span class="o">.</span><span class="n">last_value</span><span class="p">,</span> <span class="mi">200</span>
 
-        <span class="n">abort</span><span class="p">(</span><span class="mi">404</span><span class="p">)</span>
+        <span class="n">abort</span><span class="p">(</span><span class="mi">404</span><span class="p">)</span></div>
 
-    <span class="k">def</span> <span class="nf">put</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">uuid</span><span class="p">):</span>
+<div class="viewcode-block" id="TopicValueApiV1.put"><a class="viewcode-back" href="../source/index.html#main.TopicValueApiV1.put">[docs]</a>    <span class="k">def</span> <span class="nf">put</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">uuid</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">        :param uuid:</span>
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">for</span> <span class="n">mapping</span> <span class="ow">in</span> <span class="n">topic_mapping_list</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">mapping</span><span class="o">.</span><span class="n">uuid</span> <span class="o">==</span> <span class="n">uuid</span><span class="p">:</span>
                 <span class="n">args</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">reqparse</span><span class="o">.</span><span class="n">parse_args</span><span class="p">()</span>
@@ -448,34 +536,57 @@
 
                 <span class="k">return</span> <span class="n">mapping</span><span class="o">.</span><span class="n">last_value</span><span class="p">,</span> <span class="mi">200</span>
 
-        <span class="n">abort</span><span class="p">(</span><span class="mi">404</span><span class="p">)</span>
+        <span class="n">abort</span><span class="p">(</span><span class="mi">404</span><span class="p">)</span></div>
 
-    <span class="k">def</span> <span class="nf">delete</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">uuid</span><span class="p">):</span>
+<div class="viewcode-block" id="TopicValueApiV1.delete"><a class="viewcode-back" href="../source/index.html#main.TopicValueApiV1.delete">[docs]</a>    <span class="k">def</span> <span class="nf">delete</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">uuid</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">        :param uuid:</span>
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">for</span> <span class="n">topic</span> <span class="ow">in</span> <span class="n">topic_mapping_list</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">topic</span><span class="o">.</span><span class="n">uuid</span> <span class="o">==</span> <span class="n">uuid</span><span class="p">:</span>
                 <span class="n">topic_mapping_list</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">topic</span><span class="p">)</span>
                 <span class="k">return</span> <span class="p">{</span><span class="s1">&#39;result&#39;</span><span class="p">:</span> <span class="kc">True</span><span class="p">},</span> <span class="mi">200</span>
 
-        <span class="n">abort</span><span class="p">(</span><span class="mi">404</span><span class="p">)</span></div>
+        <span class="n">abort</span><span class="p">(</span><span class="mi">404</span><span class="p">)</span></div></div>
 
 
 <div class="viewcode-block" id="TopicDetailsApiV1"><a class="viewcode-back" href="../source/index.html#main.TopicDetailsApiV1">[docs]</a><span class="k">class</span> <span class="nc">TopicDetailsApiV1</span><span class="p">(</span><span class="n">Resource</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    TopicDetailsApiV1</span>
 
-    <span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">uuid</span><span class="p">):</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="TopicDetailsApiV1.get"><a class="viewcode-back" href="../source/index.html#main.TopicDetailsApiV1.get">[docs]</a>    <span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">uuid</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">        :param uuid:</span>
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">for</span> <span class="n">mapping</span> <span class="ow">in</span> <span class="n">topic_mapping_list</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">mapping</span><span class="o">.</span><span class="n">uuid</span> <span class="o">==</span> <span class="n">uuid</span><span class="p">:</span>
                 <span class="k">return</span> <span class="n">marshal</span><span class="p">(</span><span class="n">mapping</span><span class="p">,</span> <span class="n">topic_mapping_fields</span><span class="p">),</span>  <span class="c1"># TODO use marshal</span>
 
-        <span class="n">abort</span><span class="p">(</span><span class="mi">404</span><span class="p">)</span></div>
+        <span class="n">abort</span><span class="p">(</span><span class="mi">404</span><span class="p">)</span></div></div>
 
 
 <div class="viewcode-block" id="MappingValueApiV1"><a class="viewcode-back" href="../source/index.html#main.MappingValueApiV1">[docs]</a><span class="k">class</span> <span class="nc">MappingValueApiV1</span><span class="p">(</span><span class="n">Resource</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    MappingValueApiV1</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">reqparse</span> <span class="o">=</span> <span class="n">reqparse</span><span class="o">.</span><span class="n">RequestParser</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">reqparse</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s1">&#39;last_value&#39;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span> <span class="n">location</span><span class="o">=</span><span class="s1">&#39;json&#39;</span><span class="p">)</span>
         <span class="nb">super</span><span class="p">(</span><span class="n">MappingValueApiV1</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
 
-    <span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">topic</span><span class="p">):</span>
+<div class="viewcode-block" id="MappingValueApiV1.get"><a class="viewcode-back" href="../source/index.html#main.MappingValueApiV1.get">[docs]</a>    <span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">topic</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">        :param topic:</span>
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="k">for</span> <span class="n">mapping</span> <span class="ow">in</span> <span class="n">topic_mapping_list</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">mapping</span><span class="o">.</span><span class="n">topic</span> <span class="o">==</span> <span class="n">topic</span><span class="p">:</span>
@@ -483,36 +594,49 @@
                 <span class="c1"># return marshal(mapping, topic_fields), 200 # , envelope=str(mapping.uuid)</span>
                 <span class="k">return</span> <span class="n">mapping</span><span class="o">.</span><span class="n">last_value</span><span class="p">,</span> <span class="mi">200</span>
 
-        <span class="n">abort</span><span class="p">(</span><span class="mi">404</span><span class="p">)</span></div>
+        <span class="n">abort</span><span class="p">(</span><span class="mi">404</span><span class="p">)</span></div></div>
 
 
 <div class="viewcode-block" id="MappingDetailsApiV1"><a class="viewcode-back" href="../source/index.html#main.MappingDetailsApiV1">[docs]</a><span class="k">class</span> <span class="nc">MappingDetailsApiV1</span><span class="p">(</span><span class="n">Resource</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    MappingDetailsApiV1</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">reqparse</span> <span class="o">=</span> <span class="n">reqparse</span><span class="o">.</span><span class="n">RequestParser</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">reqparse</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s1">&#39;last_value&#39;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span> <span class="n">location</span><span class="o">=</span><span class="s1">&#39;json&#39;</span><span class="p">)</span>
         <span class="nb">super</span><span class="p">(</span><span class="n">MappingDetailsApiV1</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
 
-    <span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">topic</span><span class="p">):</span>
+<div class="viewcode-block" id="MappingDetailsApiV1.get"><a class="viewcode-back" href="../source/index.html#main.MappingDetailsApiV1.get">[docs]</a>    <span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">topic</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">        :param topic:</span>
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="k">for</span> <span class="n">mapping</span> <span class="ow">in</span> <span class="n">topic_mapping_list</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">mapping</span><span class="o">.</span><span class="n">topic</span> <span class="o">==</span> <span class="n">topic</span><span class="p">:</span>
                 <span class="k">return</span> <span class="n">marshal</span><span class="p">(</span><span class="n">mapping</span><span class="p">,</span> <span class="n">topic_mapping_fields</span><span class="p">),</span> <span class="mi">200</span>  <span class="c1"># , envelope=str(mapping.uuid)</span>
 
-        <span class="n">abort</span><span class="p">(</span><span class="mi">404</span><span class="p">)</span></div>
+        <span class="n">abort</span><span class="p">(</span><span class="mi">404</span><span class="p">)</span></div></div>
 
 
 <span class="c1"># Add API Resources</span>
 <span class="n">api</span><span class="o">.</span><span class="n">add_resource</span><span class="p">(</span><span class="n">Home</span><span class="p">,</span> <span class="s1">&#39;/&#39;</span><span class="p">,</span> <span class="n">endpoint</span><span class="o">=</span><span class="s1">&#39;api_home&#39;</span><span class="p">)</span>
 <span class="n">api</span><span class="o">.</span><span class="n">add_resource</span><span class="p">(</span><span class="n">ApiV1</span><span class="p">,</span> <span class="s1">&#39;/api/v1&#39;</span><span class="p">,</span> <span class="n">endpoint</span><span class="o">=</span><span class="s1">&#39;api_v1&#39;</span><span class="p">)</span>
 
-<span class="c1"># Topics</span>
+<span class="c1"># list all topics</span>
 <span class="n">api</span><span class="o">.</span><span class="n">add_resource</span><span class="p">(</span><span class="n">TopicMappingListApiV1</span><span class="p">,</span> <span class="s1">&#39;/api/v1/topics&#39;</span><span class="p">,</span> <span class="n">endpoint</span><span class="o">=</span><span class="s1">&#39;api_topic_mapping_list&#39;</span><span class="p">)</span>
+
+<span class="c1"># Topics by uuid</span>
 <span class="n">api</span><span class="o">.</span><span class="n">add_resource</span><span class="p">(</span><span class="n">TopicDetailsApiV1</span><span class="p">,</span> <span class="s1">&#39;/api/v1/topic/details/&lt;uuid:uuid&gt;&#39;</span><span class="p">,</span> <span class="n">endpoint</span><span class="o">=</span><span class="s1">&#39;api_topic_details&#39;</span><span class="p">)</span>
 <span class="n">api</span><span class="o">.</span><span class="n">add_resource</span><span class="p">(</span><span class="n">TopicValueApiV1</span><span class="p">,</span> <span class="s1">&#39;/api/v1/topic/value/&lt;uuid:uuid&gt;&#39;</span><span class="p">,</span> <span class="n">endpoint</span><span class="o">=</span><span class="s1">&#39;api_topic_value&#39;</span><span class="p">)</span>
+
+<span class="c1"># Topics by name</span>
 <span class="n">api</span><span class="o">.</span><span class="n">add_resource</span><span class="p">(</span><span class="n">MappingDetailsApiV1</span><span class="p">,</span> <span class="s1">&#39;/api/v1/topic/details/&lt;path:topic&gt;&#39;</span><span class="p">,</span> <span class="n">endpoint</span><span class="o">=</span><span class="s1">&#39;api_mapping_details&#39;</span><span class="p">)</span>
 <span class="n">api</span><span class="o">.</span><span class="n">add_resource</span><span class="p">(</span><span class="n">MappingValueApiV1</span><span class="p">,</span> <span class="s1">&#39;/api/v1/topic/value/&lt;path:topic&gt;&#39;</span><span class="p">,</span> <span class="n">endpoint</span><span class="o">=</span><span class="s1">&#39;api_mapping_value&#39;</span><span class="p">)</span>
 
-<span class="c1"># Subscription</span>
+<span class="c1"># Subscriptions</span>
 <span class="n">api</span><span class="o">.</span><span class="n">add_resource</span><span class="p">(</span><span class="n">SubscriptionsListApiV1</span><span class="p">,</span> <span class="s1">&#39;/api/v1/subscriptions&#39;</span><span class="p">,</span> <span class="n">endpoint</span><span class="o">=</span><span class="s1">&#39;api_subscription_list&#39;</span><span class="p">)</span>
 <span class="n">api</span><span class="o">.</span><span class="n">add_resource</span><span class="p">(</span><span class="n">SubscriptionDetailsApiV1</span><span class="p">,</span> <span class="s1">&#39;/api/v1/subscription/details/&lt;uuid:uuid&gt;&#39;</span><span class="p">,</span>
                  <span class="n">endpoint</span><span class="o">=</span><span class="s1">&#39;api_subscription_details&#39;</span><span class="p">)</span>
@@ -520,7 +644,12 @@
 <span class="n">run_msq_queue</span><span class="p">()</span>
 
 <span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
-    <span class="n">app</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">host</span><span class="o">=</span><span class="s1">&#39;0.0.0.0&#39;</span><span class="p">)</span>
+
+    <span class="k">try</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;test&quot;</span><span class="p">)</span>
+        <span class="n">app</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">host</span><span class="o">=</span><span class="s1">&#39;0.0.0.0&#39;</span><span class="p">)</span>
+    <span class="k">except</span> <span class="p">(</span><span class="ne">KeyboardInterrupt</span><span class="p">,</span> <span class="ne">SystemExit</span><span class="p">):</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;terminate mqtt client thread&quot;</span><span class="p">)</span>
 </pre></div>
 
            </div>

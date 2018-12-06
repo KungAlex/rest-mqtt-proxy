@@ -155,11 +155,11 @@
             
   <div class="section" id="getting-started">
 <h1>Getting-Started<a class="headerlink" href="#getting-started" title="Permalink to this headline">¶</a></h1>
-<p>This section contains a Quick-Start Example that cover basic use cases of rest-mqtt-proxy.
+<p>This section contains a Quick-Start example that cover basic use cases of rest-mqtt-proxy.
 You can use prebuild Docker image or build from source.</p>
 <div class="section" id="requirements">
 <h2>Requirements<a class="headerlink" href="#requirements" title="Permalink to this headline">¶</a></h2>
-<p>Please make sure you have Docker installed.</p>
+<p>Please make sure you have Docker installed on your machine.</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>alex@alex-ThinkPad-L480:~$ docker version
 Client:
  Version:           <span class="m">18</span>.06.1-ce
@@ -196,8 +196,8 @@ make run
 </div>
 <div class="section" id="docker">
 <h2>Docker<a class="headerlink" href="#docker" title="Permalink to this headline">¶</a></h2>
-<p>All configs can be made by mount local config files to the Docker-Container.</p>
-<p>In <em>APP_CONFIG_FILE</em> are base config for the MQTT-Broker Connection and optional the InfluxDB config used for persistent Manager.</p>
+<p>All configs can be made by mount local config files into the Docker-Container.</p>
+<p>In <em>APP_CONFIG_FILE</em> are base config for the MQTT-Broker connection and optional the InfluxDB config used as default persistent Manager.</p>
 <p>To configure what topics will be Subscribe by the Client-Thread use yaml files in <em>PRE_MAPPING_DIR</em>.</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>docker pull kungalex/rest-mqtt-proxy:latest
 docker run -it <span class="se">\</span>
@@ -213,7 +213,7 @@ docker run -it <span class="se">\</span>
 </div>
 <div class="section" id="docker-compose">
 <h2>Docker-Compose<a class="headerlink" href="#docker-compose" title="Permalink to this headline">¶</a></h2>
-<p>For an Base integration test there is docker-compose script that starts all Services like Mosquitto and InfluxDB as Docker on your localhost.</p>
+<p>For an base integration test there is a docker-compose script that starts all Services like Mosquitto and InfluxDB as Docker on your localhost.</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>docker-compose up
 
 or
@@ -229,8 +229,14 @@ make compose
 </pre></div>
 </div>
 <p>For more information about kubernetes see: <a class="reference external" href="https://kubernetes.io/">https://kubernetes.io/</a></p>
-<p>“This project is licensed under the terms of the MIT license.”
-Copyright (c) 2018 Alexander Kleinschmidt</p>
+</div>
+<div class="section" id="license-mit">
+<h2>License (MIT)<a class="headerlink" href="#license-mit" title="Permalink to this headline">¶</a></h2>
+<p>This project is licensed under the terms of the MIT license.</p>
+<p>Copyright (c) 2018 Alexander Kleinschmidt</p>
+<p># TODO
+export APP_CONFIG_FILE=”../config/prod/config.ini”
+export PRE_MAPPING_DIR=’../config/prod/mappings’</p>
 </div>
 </div>
 

@@ -10,12 +10,16 @@
 Config
 =========
 
-This section contains details about configuration and there default values.
+This section contains details about configuration and their default values.
+There are two necessary configs parts. The first configfile is for the basic connection Setup and the other for the Topic subscription.
 
-There are to different config possibilities.
+
+.. _app-config-file-label:
 
 APP_CONFIG_FILE
 ===============
+
+
 
 For the basic MQTT-Broker Config use the this example and set env APP_CONFIG_FILE
 to file path.
@@ -40,13 +44,13 @@ Filename: config.ini
 
 
 
-
+.. _pre-mapping-dir-label:
 
 PRE_MAPPING_DIR
 ===============
-
-To Subsrcibe on Topics you can use the follow yaml syntax to define some resources from kind MQTTSubscriptionV1
 All files placed in the *PRE_MAPPING_DIR* will used to create resources.
+To Subscribe some Topics you can use the follow yaml syntax to define some resources from kind MQTTSubscriptionV1.
+
 
 Filename: example.yaml
 
@@ -58,7 +62,7 @@ Filename: example.yaml
     description: 'Test Topics'
     event_handlers:
         default_manager: default_output_handler
-        persistent_manager: push_influxdb_handler
+        persistent_manager: none
 
     ---
 
@@ -67,7 +71,7 @@ Filename: example.yaml
     description: 'Test Topics'
     event_handlers:
         default_manager: default_output_handler
-        persistent_manager: push_influxdb_handler
+        persistent_manager: none
 
 
 

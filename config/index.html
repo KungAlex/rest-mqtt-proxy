@@ -155,10 +155,10 @@
             
   <div class="section" id="config">
 <span id="my-reference-label"></span><h1>Config<a class="headerlink" href="#config" title="Permalink to this headline">¶</a></h1>
-<p>This section contains details about configuration and there default values.</p>
-<p>There are to different config possibilities.</p>
+<p>This section contains details about configuration and their default values.
+There are two necessary configs parts. The first configfile is for the basic connection Setup and the other for the Topic subscription.</p>
 <div class="section" id="app-config-file">
-<h2>APP_CONFIG_FILE<a class="headerlink" href="#app-config-file" title="Permalink to this headline">¶</a></h2>
+<span id="app-config-file-label"></span><h2>APP_CONFIG_FILE<a class="headerlink" href="#app-config-file" title="Permalink to this headline">¶</a></h2>
 <p>For the basic MQTT-Broker Config use the this example and set env APP_CONFIG_FILE
 to file path.</p>
 <p>Filename: config.ini</p>
@@ -179,16 +179,16 @@ db = iot
 </div>
 </div>
 <div class="section" id="pre-mapping-dir">
-<h2>PRE_MAPPING_DIR<a class="headerlink" href="#pre-mapping-dir" title="Permalink to this headline">¶</a></h2>
-<p>To Subsrcibe on Topics you can use the follow yaml syntax to define some resources from kind MQTTSubscriptionV1
-All files placed in the <em>PRE_MAPPING_DIR</em> will used to create resources.</p>
+<span id="pre-mapping-dir-label"></span><h2>PRE_MAPPING_DIR<a class="headerlink" href="#pre-mapping-dir" title="Permalink to this headline">¶</a></h2>
+<p>All files placed in the <em>PRE_MAPPING_DIR</em> will used to create resources.
+To Subscribe some Topics you can use the follow yaml syntax to define some resources from kind MQTTSubscriptionV1.</p>
 <p>Filename: example.yaml</p>
 <div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">kind</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">MQTTSubscriptionV1</span>
 <span class="l l-Scalar l-Scalar-Plain">subregex</span><span class="p p-Indicator">:</span> <span class="s">&quot;test-a/topic/#&quot;</span>
 <span class="l l-Scalar l-Scalar-Plain">description</span><span class="p p-Indicator">:</span> <span class="s">&#39;Test</span><span class="nv"> </span><span class="s">Topics&#39;</span>
 <span class="l l-Scalar l-Scalar-Plain">event_handlers</span><span class="p p-Indicator">:</span>
     <span class="l l-Scalar l-Scalar-Plain">default_manager</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">default_output_handler</span>
-    <span class="l l-Scalar l-Scalar-Plain">persistent_manager</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">push_influxdb_handler</span>
+    <span class="l l-Scalar l-Scalar-Plain">persistent_manager</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">none</span>
 
 <span class="nn">---</span>
 
@@ -197,7 +197,7 @@ All files placed in the <em>PRE_MAPPING_DIR</em> will used to create resources.<
 <span class="l l-Scalar l-Scalar-Plain">description</span><span class="p p-Indicator">:</span> <span class="s">&#39;Test</span><span class="nv"> </span><span class="s">Topics&#39;</span>
 <span class="l l-Scalar l-Scalar-Plain">event_handlers</span><span class="p p-Indicator">:</span>
     <span class="l l-Scalar l-Scalar-Plain">default_manager</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">default_output_handler</span>
-    <span class="l l-Scalar l-Scalar-Plain">persistent_manager</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">push_influxdb_handler</span>
+    <span class="l l-Scalar l-Scalar-Plain">persistent_manager</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">none</span>
 </pre></div>
 </div>
 </div>

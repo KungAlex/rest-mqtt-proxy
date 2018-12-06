@@ -155,13 +155,33 @@
             
   <div class="section" id="overview">
 <h1>Overview<a class="headerlink" href="#overview" title="Permalink to this headline">¶</a></h1>
-<p>This section contains Information about implementation Details and the basic System-Architecture</p>
+<p>This section contains information about the System-Architecture and the basic Workflow.</p>
+<div class="section" id="system-architecture">
+<h2>System-Architecture<a class="headerlink" href="#system-architecture" title="Permalink to this headline">¶</a></h2>
 <div class="figure">
-<a class="reference internal image-reference" href="../_images/diagramm.png"><img alt="Docker" src="../_images/diagramm.png" style="width: 608.8000000000001px; height: 336.8px;" /></a>
+<a class="reference internal image-reference" href="../_images/diagramm.png"><img alt="../_images/diagramm.png" src="../_images/diagramm.png" style="width: 684.9px; height: 378.90000000000003px;" /></a>
 </div>
-<p>TODO: Describe Workflow, Threads etc.</p>
+<p>The Main Entry-Point starts an Flask Web Application and one thread for the MQTT-Client and another for InfluxDB-Client.
+To serve the Web-Application there also starts an Gunicorn Worker who acts as Web Service Gateway Interface (WSGI).</p>
+<p>For the communication between these thread there are several Queue used:</p>
+<ul class="simple">
+<li>sub_queue =&gt; To subscribe Topics</li>
+<li>msg_queue =&gt; For all incoming messages</li>
+<li>persistent_queue =&gt;  For influxDB persistent manager</li>
+<li>pub_queue =&gt;  For all messages to publish</li>
+</ul>
+</div>
+<div class="section" id="workflow">
+<h2>Workflow<a class="headerlink" href="#workflow" title="Permalink to this headline">¶</a></h2>
 <div class="figure">
-<a class="reference internal image-reference" href="../_images/uml_sequenz_diagram.png"><img alt="Docker" src="../_images/uml_sequenz_diagram.png" style="width: 588.6999999999999px; height: 491.4px;" /></a>
+<a class="reference internal image-reference" href="../_images/uml_sequenz_diagram.png"><img alt="../_images/uml_sequenz_diagram.png" src="../_images/uml_sequenz_diagram.png" style="width: 713.3px; height: 490.7px;" /></a>
+</div>
+<p>First the Main-Thread read all config files and start the different Client-threads. (<a class="reference internal" href="../config/index.html#app-config-file-label"><span class="std std-ref">APP_CONFIG_FILE</span></a>)</p>
+<p>After that it creates the Mapping Resources from kind “MQTTSubscriptionV1” and put all topics that should be subscribe in the sub_queue. (<a class="reference internal" href="../config/index.html#pre-mapping-dir-label"><span class="std std-ref">PRE_MAPPING_DIR</span></a>)</p>
+<p>The MQTT Client reads this queue and subscribe these Topics from the Broker.</p>
+<p>If some Sensor-Client Publish a Message that match one of these Subscriptions, then the message will be forwarded to the Main-Thread by the msg_queue.</p>
+<p>Then the Main-Thread search for a matching Resource and than update the corresponding value. If there is no resource than its create a new once.</p>
+<p>In the last step the Main-Thread execute all defined event_handlers for this Subscription.</p>
 </div>
 </div>
 
