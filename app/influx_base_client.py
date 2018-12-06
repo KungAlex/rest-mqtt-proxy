@@ -58,6 +58,12 @@ class InfluxDBBaseClient(object):
             _thread.interrupt_main()
             exit(0)
 
+        except KeyboardInterrupt as e:
+            log.error(e)
+            log.info('Exiting main ...')
+            _thread.interrupt_main()
+            exit(0)
+
     @run_async
     def run_persistent_queue(self):
         """
@@ -85,3 +91,4 @@ class InfluxDBBaseClient(object):
                 log.info('InfluxDBBaseClient: Exiting main...')
                 _thread.interrupt_main()
                 exit(0)
+

@@ -40,22 +40,28 @@ pub_queue = queue.Queue()  # Queue for msg to pub
 msg_queue = queue.Queue()  # Queue with incoming messages
 persistent_queue = queue.Queue() # Queue for influxDB persistent manager
 
+topic_mapping_list = []
+subscriptions_list = []
+
 
 
 def create_app():
     """
-    Return Flask App Object
+    Start Main Application
 
+    :return: Flask-App Instance
     """
     log.info("run create_app()")
     app = Flask(__name__)
-    create_persistent_client()
-    create_mqtt_client()
+    start_mqtt_client()
+    start_persistent_client()
+    create_mapping()
     return app
 
 
-def create_persistent_client():
+def start_persistent_client():
     """
+    Start an InfluxDB-Client in a new Thread.
 
     :return:
     """
@@ -71,15 +77,20 @@ def create_persistent_client():
         log.info(kwargs)
 
         t_influxdb_client = threading.Thread(name='influxdb-client', target=InfluxDBBaseClient, kwargs=kwargs)
-        t_influxdb_client.setDaemon(True)
-        t_influxdb_client.start()
+        t_influxdb_client.daemon = True
+        try:
+            t_influxdb_client.start()
+        except (KeyboardInterrupt, SystemExit):
+            print("terminate influxdb client thread")
+
 
     except KeyError as e:
         log.error(e)
 
 
-def create_mqtt_client():
+def start_mqtt_client():
     """
+    Start an MQTT-Client in a new Thread.
 
     :return:
     """
@@ -98,65 +109,76 @@ def create_mqtt_client():
 
         # Start MQTT-Client Thread
         t_mqtt_client = threading.Thread(name='MQTT-Client', target=BaseClient, kwargs=kwargs)
-        t_mqtt_client.setDaemon(True)
-        t_mqtt_client.start()
+        t_mqtt_client.daemon = True
+
+        try:
+            t_mqtt_client.start()
+        except (KeyboardInterrupt, SystemExit):
+            print("terminate mqtt client thread")
 
     except KeyError as e:
         log.error(e)
 
 
-app = create_app()
-api = Api(app)
+def create_mapping():
+    """
+    Create MQTT-Resources Mapping
 
-topic_mapping_list = []
-subscriptions_list = []
+    :return:
+    """
 
+    log.info(PRE_MAPPING_DIR)
 
-log.info(PRE_MAPPING_DIR)
+    # TODO
+    for file in os.listdir(PRE_MAPPING_DIR):
+        print(file)
+        if file.endswith(".yaml") or file.endswith(".yml"):
+            yaml_file = (os.path.join(PRE_MAPPING_DIR, file))
+            print(yaml_file)
+            with open(yaml_file, 'r') as stream:
+                yamls = yaml.load_all(stream)
+                for y in yamls:
 
-# TODO
-for file in os.listdir(PRE_MAPPING_DIR):
-    print(file)
-    if file.endswith(".yaml") or file.endswith(".yml"):
-        yaml_file = (os.path.join(PRE_MAPPING_DIR, file))
-        print(yaml_file)
-        with open(yaml_file, 'r') as stream:
-            yamls = yaml.load_all(stream)
-            for y in yamls:
+                    try:
 
-                try:
+                        kind = y['kind']
 
-                    kind = y['kind']
+                        # TODO switch case alternative!
 
-                    # TODO switch case alternative!
+                        if kind == "MQTTSubscriptionV1":
+                            try:
+                                sub = MQTTSubscriptionV1.load_yaml(yaml=y)
+                                subscriptions_list.append(sub)
 
-                    if kind == "MQTTSubscriptionV1":
-                        try:
-                            sub = MQTTSubscriptionV1.load_yaml(yaml=y)
-                            subscriptions_list.append(sub)
+                            except yaml.YAMLError as exc:
+                                log.error(exc)
+                                # TODO exceptions description#
 
-                        except yaml.YAMLError as exc:
-                            log.error(exc)
-                            # TODO exceptions description#
+                        if kind == "MQTTSubscriptionV2":
+                            try:
+                                sub = MQTTSubscriptionV1.load_yaml(yaml=y)
+                                subscriptions_list.append(sub)
 
-                    if kind == "MQTTSubscriptionV2":
-                        try:
-                            sub = MQTTSubscriptionV1.load_yaml(yaml=y)
-                            subscriptions_list.append(sub)
+                            except yaml.YAMLError as exc:
+                                log.error(exc)
+                                # TODO exceptions description#
 
-                        except yaml.YAMLError as exc:
-                            log.error(exc)
-                            # TODO exceptions description#
+                    except KeyError as exc:
+                        log.error("KeyError: " + str(exc))
 
-                except KeyError as exc:
-                    log.error("KeyError: " + str(exc))
-
-for subscription in subscriptions_list:
-    log.info(subscription.__repr__())
-    sub_queue.put(subscription.subregex)
+    for subscription in subscriptions_list:
+        log.info(subscription.__repr__())
+        sub_queue.put(subscription.subregex)
 
 
 def run_event_handlers(subscribtion, msg):
+    """
+    Run defined Event-Handler for incoming massages
+
+    :param subscribtion:
+    :param msg:
+    :return:
+    """
     try:
         default_manager = getattr(Callbacks, subscribtion.event_handlers['default_manager'])
         if default_manager is not None:
@@ -180,6 +202,11 @@ def run_event_handlers(subscribtion, msg):
 
 @run_async
 def run_msq_queue():
+    """
+    Run Queue for handle Resource-Mapping
+
+    :return:
+    """
     while True:
         to_add = True  # If True a new Topic mapping will be create and append to list
         msg = msg_queue.get()
@@ -224,8 +251,20 @@ def run_msq_queue():
             run_event_handlers(topic_sub, msg)
 
 
+app = create_app()
+api = Api(app)
+
+
 class Home(Resource):
+    """
+    Home
+
+    """
     def get(self):
+        """
+
+        :return:
+        """
         return {
             'msg': 'Welcome to rest-mqtt-proxy prototype!',
             'urls':
@@ -237,7 +276,15 @@ class Home(Resource):
 
 
 class ApiV1(Resource):
+    """
+    ApiV1
+
+    """
     def get(self):
+        """
+
+        :return:
+        """
         return {'api_version': 1, 'urls': {
             'topic_mapping_list': url_for('api_topic_mapping_list', _external=True),
             'subscriptions_list': url_for('api_subscription_list', _external=True)
@@ -245,21 +292,46 @@ class ApiV1(Resource):
 
 
 class TopicMappingListApiV1(Resource):
+    """
+    TopicMappingListApiV1
+
+    """
 
     def get(self):
+        """
+
+        :return:
+        """
         return {'topic_mapping_list': [marshal(topic, topic_mapping_fields) for topic in topic_mapping_list]}
 
 
 class SubscriptionsListApiV1(Resource):
+    """
+    SubscriptionsListApiV1
+
+    """
 
     def get(self):
+        """
+
+        :return:
+        """
         return {'subscriptions_list': [marshal(subscription, subscription_fields) for subscription in
                                        subscriptions_list]}
 
 
 class SubscriptionDetailsApiV1(Resource):
+    """
+    SubscriptionDetailsApiV1
+
+    """
 
     def get(self, uuid):
+        """
+
+        :param uuid:
+        :return:
+        """
         for subscription in subscriptions_list:
             if subscription.uuid == uuid:
                 return marshal(subscription, subscription_fields),  # TODO use marshal
@@ -268,6 +340,10 @@ class SubscriptionDetailsApiV1(Resource):
 
 
 class TopicValueApiV1(Resource):
+    """
+    TopicValueApiV1
+
+    """
     def __init__(self):
         self.reqparse = reqparse.RequestParser()
         self.reqparse.add_argument('last_value', type=str, location='json')
@@ -275,6 +351,11 @@ class TopicValueApiV1(Resource):
         super(TopicValueApiV1, self).__init__()
 
     def get(self, uuid):
+        """
+
+        :param uuid:
+        :return:
+        """
         for mapping in topic_mapping_list:
             if mapping.uuid == uuid:
                 # return marshal(mapping, topic_fields),  # TODO use marshal
@@ -283,6 +364,11 @@ class TopicValueApiV1(Resource):
         abort(404)
 
     def put(self, uuid):
+        """
+
+        :param uuid:
+        :return:
+        """
         for mapping in topic_mapping_list:
             if mapping.uuid == uuid:
                 args = self.reqparse.parse_args()
@@ -299,6 +385,11 @@ class TopicValueApiV1(Resource):
         abort(404)
 
     def delete(self, uuid):
+        """
+
+        :param uuid:
+        :return:
+        """
         for topic in topic_mapping_list:
             if topic.uuid == uuid:
                 topic_mapping_list.remove(topic)
@@ -308,8 +399,17 @@ class TopicValueApiV1(Resource):
 
 
 class TopicDetailsApiV1(Resource):
+    """
+    TopicDetailsApiV1
+
+    """
 
     def get(self, uuid):
+        """
+
+        :param uuid:
+        :return:
+        """
         for mapping in topic_mapping_list:
             if mapping.uuid == uuid:
                 return marshal(mapping, topic_mapping_fields),  # TODO use marshal
@@ -318,12 +418,21 @@ class TopicDetailsApiV1(Resource):
 
 
 class MappingValueApiV1(Resource):
+    """
+    MappingValueApiV1
+
+    """
     def __init__(self):
         self.reqparse = reqparse.RequestParser()
         self.reqparse.add_argument('last_value', type=str, location='json')
         super(MappingValueApiV1, self).__init__()
 
     def get(self, topic):
+        """
+
+        :param topic:
+        :return:
+        """
 
         for mapping in topic_mapping_list:
             if mapping.topic == topic:
@@ -335,12 +444,21 @@ class MappingValueApiV1(Resource):
 
 
 class MappingDetailsApiV1(Resource):
+    """
+    MappingDetailsApiV1
+
+    """
     def __init__(self):
         self.reqparse = reqparse.RequestParser()
         self.reqparse.add_argument('last_value', type=str, location='json')
         super(MappingDetailsApiV1, self).__init__()
 
     def get(self, topic):
+        """
+
+        :param topic:
+        :return:
+        """
 
         for mapping in topic_mapping_list:
             if mapping.topic == topic:
@@ -368,4 +486,9 @@ api.add_resource(SubscriptionDetailsApiV1, '/api/v1/subscription/details/<uuid:u
 run_msq_queue()
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0')
+
+    try:
+        print("test")
+        app.run(host='0.0.0.0')
+    except (KeyboardInterrupt, SystemExit):
+        print("terminate mqtt client thread")

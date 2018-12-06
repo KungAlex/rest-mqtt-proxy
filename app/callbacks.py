@@ -1,7 +1,7 @@
 """
 callbacks.py
 ====================================
-The core module of my example project
+All Callback Handler
 """
 
 
@@ -14,11 +14,13 @@ log = logging.getLogger(__name__)
 
 class Callbacks(object):
     """
-    Test
+    Callbacks
+
     """
 
     def default_output_handler(msg):
         """
+        default_output_handler
 
         :return:
         """
@@ -34,6 +36,7 @@ class Callbacks(object):
 
     def push_influxdb_handler(msg, queue):
         """
+        push_influxdb_handler
 
         :param queue:
         :return:

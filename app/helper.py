@@ -1,7 +1,7 @@
 """
 helper.py
 =========
-a simple helper function used for this project
+Simple helper functions used in this project
 """
 
 

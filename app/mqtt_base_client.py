@@ -1,7 +1,7 @@
 """
 mqtt_base_client.py
 ====================================
-Main entry-point of this project
+Base MQTT Client
 """
 
 import paho.mqtt.client as mqtt
@@ -112,6 +112,12 @@ class BaseClient(object):
             exit(0)
 
         except OSError as e:
+            log.error(e)
+            log.info('Exiting main ...')
+            _thread.interrupt_main()
+            exit(0)
+
+        except KeyboardInterrupt as e:
             log.error(e)
             log.info('Exiting main ...')
             _thread.interrupt_main()
