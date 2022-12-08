@@ -1,7 +1,7 @@
 alabaster==0.7.12
 aniso8601==4.0.1
 Babel==2.6.0
-certifi==2018.10.15
+certifi==2022.12.7
 chardet==3.0.4
 Click==7.0
 CommonMark==0.5.4
